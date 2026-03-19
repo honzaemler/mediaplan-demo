@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+<title>Demo Client · Marketing Plan 2026</title>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — upravuj tady
+   ═══════════════════════════════════════════ */
+:root{
+  /* Barvy */
+  --bg:#F7F7F5;
+  --surface:#FFFFFF;
+  --text:#111827;
+  --text-muted:#374151;
+  --text-faint:#6B7280;
+  --border:#E5E7EB;
+  --border-strong:#D1D5DB;
+  --accent:#16A34A;
+  --accent-hover:#15803D;
+  --accent-soft:#DCFCE7;
+  --danger:#DC2626;
+  --warning:#D97706;
+  --focus-ring:#60A5FA;
+  /* Typografie */
+  --font:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-size:14px;
+  --line-height:1.5;
+  /* Radius */
+  --radius-sm:8px;
+  --radius-md:12px;
+  /* Stíny */
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  /* Spacing */
+  --card-pad:16px;
+  --gap:16px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:var(--font-size);line-height:var(--line-height);min-height:100vh}
+
+/* Focus ring pro přístupnost */
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px;border-radius:4px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+
+/* ─── HEADER ─── */
+#top{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  padding:10px 20px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:20;
+  box-shadow:var(--shadow-sm);
+  max-width:100%;
+}
+.t-brand{display:flex;align-items:center;gap:10px;flex:1}
+.t-icon{font-size:20px}
+.t-title{font-size:15px;font-weight:600;color:var(--text);letter-spacing:-.2px}
+.t-sub{font-size:11px;color:var(--text-faint);margin-top:1px}
+.navs{display:flex;gap:4px}
+.nb{
+  background:transparent;
+  border:1px solid var(--border-strong);
+  color:var(--text-muted);
+  border-radius:var(--radius-sm);
+  padding:5px 12px;cursor:pointer;
+  font-size:12px;font-family:inherit;font-weight:500;
+  transition:all .15s;
+}
+.nb:hover{background:var(--bg);border-color:var(--text-muted);color:var(--text)}
+.nb.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:600}
+.t-ref{margin-left:auto;text-align:right}
+.tr-lbl{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.5px}
+.tr-val{font-size:14px;font-weight:700;color:var(--text)}
+.tr-sub{font-size:11px;color:var(--text-muted)}
+
+#body{max-width:1200px;margin:0 auto;padding:20px}
+.view{display:none}.view.on{display:block}
+
+/* ─── CEO LAYOUT ─── */
+.ceo-wrap{display:grid;grid-template-columns:300px 1fr;gap:var(--gap);align-items:start}
+.ctrl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.ctrl-head{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.sc-btns{display:flex;gap:6px;margin-bottom:14px}
+.sc-btn{
+  flex:1;padding:7px 10px;
+  border:1px solid var(--border-strong);
+  background:var(--bg);
+  color:var(--text-muted);
+  border-radius:var(--radius-sm);
+  cursor:pointer;font-family:inherit;
+  font-size:12px;font-weight:500;
+  transition:all .15s;
+}
+.sc-btn:hover{border-color:var(--text-muted);color:var(--text)}
+.sc-btn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);font-weight:600}
+.ctrl-row{margin-bottom:10px}
+.ctrl-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:3px}
+.ctrl-v{font-size:13px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px dashed #475569}
+input[type=range]{
+  width:100%;cursor:pointer;
+  height:4px;display:block;margin:4px 0 2px;
+  border-radius:2px;
+  -webkit-appearance:none;appearance:none;
+  background:var(--border-strong);
+}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+.ctrl-ends{display:flex;justify-content:space-between;font-size:10px;color:var(--text-faint)}
+.sum-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.sk{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 11px;box-shadow:var(--shadow-sm);overflow:hidden}
+.sk-l{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;font-weight:500;white-space:nowrap}
+.sk-v{font-size:15px;font-weight:700;color:var(--text)}
+.sk-s{font-size:9px;color:var(--text-faint);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ─── FUNNEL ─── */
+.funnel-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.f-title{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.funnel{display:flex;align-items:stretch;gap:0;overflow-x:auto}
+.f-step{flex:1;min-width:100px;display:flex;flex-direction:column;align-items:center}
+.f-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 8px 12px;text-align:center;width:100%;display:flex;flex-direction:column;align-items:center;min-height:130px}
+.f-icon{font-size:20px;height:26px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.f-lbl{font-size:10px;color:var(--text-muted);font-weight:500;height:14px;display:flex;align-items:center;justify-content:center;margin-bottom:5px}
+.f-val{font-size:15px;font-weight:700;color:var(--text);height:22px;display:flex;align-items:center;justify-content:center}
+.f-sub{font-size:10px;color:var(--text-faint);margin-top:4px;height:14px;display:flex;align-items:center;justify-content:center}
+.f-vs{font-size:10px;font-weight:600;margin-top:4px;height:14px;display:flex;align-items:center;justify-content:center}
+.f-arr{display:flex;align-items:center;padding:0 4px;color:var(--border-strong);font-size:16px;flex-shrink:0;align-self:center;margin-bottom:6px}
+
+/* ─── CHANNEL TABLE ─── */
+.ch-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);box-shadow:var(--shadow-sm)}
+.sec{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:7px 10px;border-bottom:1px solid var(--border-strong);color:var(--text-muted);text-align:left;font-weight:600;white-space:nowrap;background:var(--bg)}
+td{padding:6px 10px;color:var(--text);white-space:nowrap;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf9}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle;flex-shrink:0}
+.bar-cell{max-width:100px}
+.bar-w{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.bar-f{height:100%}
+.note-box{margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;color:var(--text-muted);line-height:1.6}
+
+/* ─── MODELS ─── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);box-shadow:var(--shadow-sm)}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.p-tag{font-size:10px;font-weight:600;padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:4px}
+.p-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.copy-btn{margin-top:4px;padding:3px 10px;font-size:11px;border:1px solid var(--brd);border-radius:6px;background:var(--card);color:var(--sub);cursor:pointer;transition:all .15s}
+.copy-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.p-rev{font-size:20px;font-weight:700;color:var(--text);text-align:right}
+.p-vs{font-size:11px;font-weight:600;text-align:right;margin-top:2px}
+.kstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:12px}
+.kb{background:var(--bg);border-radius:var(--radius-sm);padding:8px 9px;border:1px solid var(--border)}
+.kl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;font-weight:500}
+.kv{font-size:13px;font-weight:700;color:var(--text)}
+.ks{font-size:10px;color:var(--text-faint);margin-top:2px}
+.wf{margin:12px 0 4px}
+.wf-t{height:10px;background:var(--border);border-radius:4px;overflow:hidden;display:flex}
+.wf-s{height:100%}
+.wf-leg{display:flex;gap:12px;margin-top:5px;flex-wrap:wrap}
+.ld{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-muted)}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.grpb{margin-bottom:3px}
+.gh{
+  width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  padding:7px 0;font-family:inherit;font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);
+  transition:color .15s;
+}
+.gh:hover{color:var(--text)}
+.gdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.garr{margin-left:auto;font-size:9px;color:var(--text-faint)}
+.gsl{display:none}.gsl.open{display:block}
+.slr{padding:6px 0 3px;border-bottom:1px solid var(--border)}
+.slr:last-child{border-bottom:none}
+.slt{display:flex;justify-content:space-between;margin-bottom:2px;align-items:baseline}
+.sll{color:var(--text-muted);font-size:12px}
+.sln{color:var(--text-faint);font-size:10px}
+.slv{font-size:12px;font-weight:600;color:var(--text);cursor:pointer;border-bottom:1px dashed #475569}
+.slrange{width:100%;cursor:pointer;height:4px;display:block;margin:3px 0;border-radius:2px;-webkit-appearance:none;appearance:none;background:var(--border-strong)}
+.slrange::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.slrange:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+.sle{display:flex;justify-content:space-between;font-size:10px;color:var(--text-faint)}
+.cbars{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.crow{display:flex;align-items:center;gap:7px}
+.clbl{width:90px;font-size:11px;color:var(--text-muted);text-align:right;flex-shrink:0}
+.ctrk{flex:1;height:7px;background:var(--border);border-radius:3px;overflow:hidden}
+.cfil{height:100%}
+.cval{width:52px;font-size:11px;color:var(--text);text-align:right;font-weight:500}
+.cpct{width:36px;font-size:10px;color:var(--text-faint);text-align:right}
+
+/* ─── MONTHLY ─── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.ctitle{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.chw{display:flex;align-items:flex-end;gap:4px;height:120px;position:relative}
+.cc{flex:1;display:flex;flex-direction:column;align-items:center}
+.cbs{width:100%;height:98px;display:flex;align-items:flex-end;justify-content:center;gap:2px}
+.cb{border-radius:3px 3px 0 0;min-height:2px}
+.cl{font-size:10px;color:var(--text-muted);margin-top:3px;font-weight:500}
+
+/* ─── REALITY TRACKER PANEL ─── */
+.rtpanel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--card-pad);margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.rtpanel-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.rtpanel-title{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase}
+.rtpanel-kpis{font-size:12px;color:var(--text-muted)}
+.rtpanel-kpis strong{color:var(--text)}
+.rt-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.rt-cell{display:flex;flex-direction:column;gap:3px;text-align:center}
+.rt-lbl{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase}
+.rt-inp{width:100%;padding:4px 3px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-family:var(--font);font-size:11px;font-weight:600;text-align:center;-moz-appearance:textfield}
+.rt-inp::-webkit-inner-spin-button,.rt-inp::-webkit-outer-spin-button{-webkit-appearance:none}
+.rt-inp:focus{outline:2px solid var(--focus-ring);border-color:transparent}
+.rt-inp.future{background:var(--bg);color:var(--text-faint);border-color:var(--border);font-weight:400}
+.rt-inp.has-val{border-color:#7C3AED44;background:#F5F3FF}
+@media(max-width:960px){.rt-grid{grid-template-columns:repeat(6,1fr)}}
+
+/* ─── COMPARE ─── */
+.cmp-grid{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start}
+.mg4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;box-shadow:var(--shadow-sm)}
+.mbars{display:flex;gap:14px;align-items:flex-end;height:60px;margin-top:6px}
+.mbw{flex:1;text-align:center}
+.mbt{display:flex;align-items:flex-end;justify-content:center;height:42px}
+.mbf{width:28px;border-radius:3px 3px 0 0;min-height:3px}
+.mbv{font-size:11px;font-weight:700;color:var(--text);margin-top:3px}
+.mbl{font-size:10px;color:var(--text-muted)}
+.rr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)}
+.rr:last-of-type{border-bottom:none}
+.rl{color:var(--text-muted);font-size:12px}
+.rv{color:var(--text);font-size:12px;font-weight:600}
+.rnote{margin-top:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;color:var(--text-muted);line-height:1.6}
+
+@media(max-width:960px){.grid2,.cmp-grid,.ceo-wrap{grid-template-columns:1fr}}
+
+/* ─── HEADER ACTIONS ─── */
+.hactions{display:flex;align-items:center;gap:4px;position:relative;margin-left:8px}
+.hbtn{
+  background:var(--bg);border:1px solid var(--border-strong);
+  color:var(--text-muted);border-radius:var(--radius-sm);
+  padding:5px 10px;cursor:pointer;font-family:inherit;
+  font-size:12px;font-weight:500;transition:all .15s;white-space:nowrap;
+}
+.hbtn:hover:not(:disabled){background:var(--surface);border-color:var(--text-muted);color:var(--text)}
+.hbtn:disabled{opacity:.35;cursor:not-allowed}
+.hbtn-export{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.hbtn-export:hover:not(:disabled){background:var(--accent-hover);border-color:var(--accent-hover);color:#fff}
+.hbtn-danger{background:#FEF2F2;color:var(--danger);border-color:#FECACA;font-weight:600}
+.hbtn-danger:hover:not(:disabled){background:#FEE2E2;border-color:var(--danger);color:var(--danger)}
+.hsep{width:1px;height:20px;background:var(--border-strong);margin:0 2px}
+.emenu{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:var(--radius-sm);box-shadow:0 4px 16px rgba(0,0,0,.1);
+  min-width:170px;z-index:100;overflow:hidden;
+}
+.emenu button{
+  display:block;width:100%;text-align:left;
+  padding:9px 14px;border:none;background:transparent;
+  font-family:inherit;font-size:13px;color:var(--text);cursor:pointer;
+}
+.emenu button:hover{background:var(--bg)}
+
+/* ─── PRINT / PDF ─── */
+@media print{
+  #top .hactions,#top .navs{display:none}
+  #top{position:static;box-shadow:none;border-bottom:2px solid #111}
+  .view{display:block!important}
+  #view-ceo,#view-models,#view-monthly,#view-compare{page-break-after:always}
+  body{background:#fff;font-size:11px}
+  .panel,.funnel-box,.ch-box,.card,.ctrl-box,.sum-strip,.cmp-grid{box-shadow:none}
+  input[type=range]{display:none}
+  .gh,.garr,.grpb{display:none}
+  #print-header{display:block}
+}
+</style>
+</head>
+<body>
+<div id="top">
+  <div class="t-brand">
+    <span class="t-icon">📊</span>
+    <div>
+      <div class="t-title">Demo Client · Marketing Plan 2026</div>
+      <div class="t-sub">Demo data · Funnel po kanálech · Sezónní ROAS · Scénáře A/B</div>
+    </div>
+  </div>
+  <div class="navs">
+    <button class="nb on" onclick="sv('ceo',this)">👤 CEO Funnel</button>
+    <button class="nb" onclick="sv('models',this)">⚡ Modely</button>
+    <button class="nb" onclick="sv('monthly',this)">📅 Měsíce</button>
+    <button class="nb" onclick="sv('compare',this)">⚖️ Srovnání</button>
+  </div>
+  <div class="hactions">
+    <button class="hbtn" id="btn-undo" onclick="histUndo()" title="Zpět (Ctrl+Z)" disabled>↩ Zpět</button>
+    <button class="hbtn" id="btn-redo" onclick="histRedo()" title="Vpřed (Ctrl+Y)" disabled>↪ Vpřed</button>
+    <div class="hsep"></div>
+    <button class="hbtn hbtn-danger" onclick="resetParams()" title="Obnovit výchozí hodnoty">↺ Reset</button>
+    <div class="hsep"></div>
+    <button class="hbtn hbtn-export" onclick="showExportMenu()" id="btn-export">⬇ Export ▾</button>
+    <div id="export-menu" class="emenu" style="display:none">
+      <button onclick="exportCSV();closeExportMenu()">📊 CSV pro Excel</button>
+      <button onclick="exportPDF();closeExportMenu()">📄 Stáhnout PDF report</button>
+    </div>
+  </div>
+  <div class="t-ref">
+    <div class="tr-lbl">2025 SKUTEČNOST (GA4, s DPH)</div>
+    <div class="tr-val" id="hdr-rev25"></div>
+    <div class="tr-sub" id="hdr-sub25"></div>
+  </div>
+</div>
+
+<div id="body">
+  <div id="view-ceo"     class="view on"><div id="ceo-c"></div></div>
+  <div id="view-models"  class="view"><div class="grid2"><div id="panel-a"></div><div id="panel-b"></div></div></div>
+  <div id="view-monthly" class="view"><div id="monthly-c"></div></div>
+  <div id="view-compare" class="view"><div id="compare-c"></div></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// DEMO DATA (náhodná čísla pro ukázku)
+// ════════════════════════════════════════════════════════════
+const A25 = {
+  // GA4 total — demo
+  revenue: 538700,
+  vatRate: 0.21,
+  sessions: 1124500,
+  orders: 1480,
+  cvr: 0.00132,
+  aov: 364,
+
+  // Monthly revenue — demo sezónní profil
+  monthlyRev: [28400,31200,48500,52800,58300,44100,50600,69200,62400,37800,26100,14200],
+
+  // GA4 channels — demo
+  channels: {
+    organic:  {sessions:738400, rev:225600, orders:631, cvr:0.00082, aov:358, spend:7200,  label:'Organic Search',  color:'#34A853'},
+    crossnet: {sessions:98900,  rev:71200,  orders:187, cvr:0.00182, aov:381, spend:30500, label:'Google Ads (PMax/Search)', color:'#4285F4'},
+    direct:   {sessions:96500,  rev:114100, orders:297, cvr:0.00301, aov:384, spend:0,     label:'Direct / Brand',  color:'#78909C'},
+    paidsoc:  {sessions:89000,  rev:12100,  orders:39,  cvr:0.00042, aov:310, spend:26400, label:'Meta Ads (Paid Social)', color:'#0668E1'},
+    paidsrch: {sessions:42300,  rev:59300,  orders:182, cvr:0.00418, aov:326, spend:0,     label:'Paid Search (Brand kw)', color:'#34D399'},
+    unassign: {sessions:39400,  rev:19100,  orders:58,  cvr:0.00141, aov:329, spend:0,     label:'Unassigned',      color:'#6B7280'},
+    referral: {sessions:25100,  rev:12900,  orders:36,  cvr:0.00140, aov:358, spend:5500,  label:'Referral / PR',   color:'#AB47BC'},
+    email:    {sessions:4970,   rev:10800,  orders:25,  cvr:0.00482, aov:432, spend:4100,  label:'Email',           color:'#FF9800'},
+    orgsoc:   {sessions:12800,  rev:5400,   orders:14,  cvr:0.00105, aov:386, spend:3600,  label:'Organic Social',  color:'#F59E0B'},
+  },
+
+  // Monthly Google ROAS — demo
+  gROAS: [8.7, 8.2, 8.8, 9.1, 4.8, 6.3, 5.9, 2.7, 4.5, 5.3, 3.1, 3.3],
+  // Monthly Meta ROAS — demo
+  mROAS: [3.9, 4.7, 8.5, 4.4, 3.7, 5.5, 3.6, 2.5, 3.6, 2.5, 3.8, 0.6],
+
+  // Other costs 2025 — demo
+  management: 19200, organic: 7200, email: 4100, pr: 5500, other: 720,
+  decathlonRev: 280, decathlonFee: 3400,
+
+  // Reality 2026 — demo
+  reality2026: [36200, 28800, 0,0,0,0,0,0,0,0,0,0],
+};
+
+const gAvg = A25.gROAS.reduce((a,b)=>a+b,0)/12;
+const mAvg = A25.mROAS.reduce((a,b)=>a+b,0)/12;
+// 2025 revenue bez DPH — pro srovnání s 2026 cíli (které jsou bez DPH)
+const REV25_EX = Math.round(A25.revenue / (1 + A25.vatRate));
+
+const MONTHS   = ['Led','Úno','Bře','Dub','Kvě','Čvn','Čvc','Srp','Zář','Říj','Lis','Pro'];
+const MONTHS_F = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+const NOW_MONTH = new Date().getMonth(); // 0-based; Feb 2026 = 1
+const avgRev25 = A25.monthlyRev.reduce((a,b)=>a+b,0)/12;
+const SEAS     = A25.monthlyRev.map(v=>v/avgRev25);
+
+// Monthly cost distribution — demo
+const COST_MONTHLY = [3850, 5170, 6680, 7750, 8850, 8300, 9160, 10690, 10450, 8670, 3950, 2240];
+const costAvg = COST_MONTHLY.reduce((a,b)=>a+b,0) / 12;
+const COST_SEAS = COST_MONTHLY.map(v => v / costAvg);  // normalized: avg = 1.0
+
+// Ad spend weights — demo
+const ADSPEND_MONTHLY = [1530, 2510, 3460, 4530, 5630, 5390, 6240, 7470, 7220, 5940, 1960, 740];
+const adspendAvg = ADSPEND_MONTHLY.reduce((a,b)=>a+b,0) / 12;
+const ADSPEND_SEAS = ADSPEND_MONTHLY.map(v => v / adspendAvg);  // normalized: avg = 1.0
+
+// Channel keys in display order
+const CH_KEYS = ['organic','crossnet','direct','paidsoc','paidsrch','unassign','referral','email','orgsoc'];
+
+// ════════════════════════════════════════════════════════════
+// PARAMS — default scenarios
+// ════════════════════════════════════════════════════════════
+function mkParams(growthF, label) {
+  const base = REV25_EX;
+  const decRev = growthF > 1.5 ? 192000 : 150000;
+  return {
+    label,
+    totalRevGoal: Math.round((base * growthF - decRev) / 5000) * 5000,
+    decathlonRev: decRev,
+    cvr:  0.00145,
+    aov:  385,
+    decathlonAov: 285,
+    googleROAS: 5.8,
+    metaROAS:   4.1,
+    googleBudget: growthF > 1.5 ? 27500 : 22000,
+    metaBudget:   growthF > 1.5 ? 5000  : 3800,
+    marginRate: 0.205,
+    // % share of organic (non-paid) revenue per channel (excl marketplace)
+    shareOrganic:  0.42,
+    shareDirect:   0.21,
+    shareUnassign: 0.03,
+    shareReferral: 0.02,
+    shareEmail:    0.02,
+    shareOrgsoc:   0.02,
+    // costs
+    management: growthF > 1.5 ? 24500 : 20800,
+    organic:    8000,
+    email:      4100,
+    pr:         growthF > 1.5 ? 12200 : 7300,
+    decathlonFee: growthF > 1.5 ? 4900 : 4300,
+    other:      980,
+  };
+}
+const paramsA = mkParams(1.35, '');
+const paramsB = mkParams(1.70, '');
+
+// Dynamický label — vždy aktuální % vs 2025
+function scenLabel(p) {
+  const total = p.totalRevGoal + p.decathlonRev;
+  const pct = Math.round((total - REV25_EX) / REV25_EX * 100);
+  return (pct >= 0 ? '+' : '') + pct + ' %';
+}
+function scenFullLabel(p, letter) {
+  return 'Scénář ' + letter + ' · ' + scenLabel(p);
+}
+let ceoSide = 'a';
+
+// ════════════════════════════════════════════════════════════
+// COMPUTE
+// ════════════════════════════════════════════════════════════
+function compute(p) {
+  const ownRev = p.totalRevGoal;
+  const totalRev = p.totalRevGoal + p.decathlonRev;
+
+  // Paid channels: budget → revenue (budget × ROAS)
+  const googleSpend   = p.googleBudget;
+  const metaSpend     = p.metaBudget;
+  const paidSpend     = googleSpend + metaSpend;
+  const googleRevYear = googleSpend * p.googleROAS;
+  const metaRevYear   = metaSpend   * p.metaROAS;
+
+  // Split Google rev between crossnet / paidsrch (2025 ratio: 54.5% / 45.5%)
+  const gSplitCross = 0.545;
+  const chRev={}, chVis={}, chOrders={};
+  chRev['crossnet'] = googleRevYear * gSplitCross;
+  chRev['paidsrch'] = googleRevYear * (1 - gSplitCross);
+  chRev['paidsoc']  = metaRevYear;
+
+  // Organic (non-paid) revenue = e-shop goal minus paid revenue (min 0)
+  const paidRev    = googleRevYear + metaRevYear;
+  const organicRev = Math.max(0, ownRev - paidRev);
+
+  // Distribute organic revenue among organic channels by normalized shares
+  const orgKeys = ['organic','direct','unassign','referral','email','orgsoc'];
+  const shareKeys = {organic:'shareOrganic',direct:'shareDirect',
+    unassign:'shareUnassign',referral:'shareReferral',email:'shareEmail',orgsoc:'shareOrgsoc'};
+  let orgShareSum = 0;
+  for(const k of orgKeys) orgShareSum += p[shareKeys[k]];
+  for(const k of orgKeys) {
+    chRev[k] = organicRev * (p[shareKeys[k]] / (orgShareSum || 1));
+  }
+
+  // Sessions & orders for all e-shop channels
+  for(const k of CH_KEYS) {
+    chVis[k]    = chRev[k] / (p.cvr * p.aov);
+    chOrders[k] = chVis[k] * p.cvr;
+  }
+
+  // Decathlon — marketplace, no web sessions
+  chRev['decathlon']    = p.decathlonRev;
+  chVis['decathlon']    = 0;
+  chOrders['decathlon'] = p.decathlonRev / p.decathlonAov;
+
+  const totalVis    = Object.values(chVis).reduce((a,b)=>a+b,0);
+  const totalOrders = Object.values(chOrders).reduce((a,b)=>a+b,0);
+
+  const fixedCosts = p.management+p.organic+p.email+p.pr+p.decathlonFee+p.other;
+  const totalCost  = paidSpend + fixedCosts;
+  const grossMargin= totalRev * p.marginRate;
+  const netProfit  = grossMargin - totalCost;
+  const pno        = totalCost / totalRev;
+  const vsActual   = (totalRev - REV25_EX) / REV25_EX;
+
+  // Monthly breakdown
+  const seasSum = SEAS.reduce((a,b)=>a+b,0);
+  const gFloor = 5.0, mFloor = 4.0;
+  const gROASm  = A25.gROAS.map(r => Math.max(gFloor, r * (p.googleROAS / gAvg)));
+  const mROASm  = A25.mROAS.map(r => Math.max(mFloor, r * (p.metaROAS   / mAvg)));
+
+  // Monthly cost distribution from real budget plan
+  // Ad spend uses ADSPEND_SEAS profile, fixed costs use COST_SEAS profile
+  const adNorm = ADSPEND_SEAS.reduce((a,b)=>a+b,0) / 12;  // should be ~1.0
+  const costNorm = COST_SEAS.reduce((a,b)=>a+b,0) / 12;
+
+  const months = MONTHS.map((_,i) => {
+    const sf   = SEAS[i] / (seasSum/12);
+    const mOwnRev = (ownRev/12) * sf;
+    const mDecRev = p.decathlonRev / 12;
+    const mTot = mOwnRev + mDecRev;
+    const mGSpend = (googleSpend/12) * (ADSPEND_SEAS[i] / adNorm);
+    const mMSpend = (metaSpend/12)   * (ADSPEND_SEAS[i] / adNorm);
+    const mG   = mGSpend;
+    const mM   = mMSpend;
+    const mFix = (fixedCosts/12) * (COST_SEAS[i] / costNorm);
+    const mC   = mG + mM + mFix;
+    return {tot:mTot, google:mG, meta:mM, cost:mC, pno:mC/mTot,
+            vis:mTot/(p.cvr*p.aov), orders:(mTot/(p.cvr*p.aov))*p.cvr,
+            gROAS:gROASm[i], mROAS:mROASm[i]};
+  });
+
+  return {ownRev,totalRev,chRev,chVis,chOrders,totalVis,totalOrders,
+          googleRevYear,metaRevYear,googleSpend,metaSpend,
+          paidSpend,fixedCosts,totalCost,grossMargin,netProfit,pno,vsActual,months};
+}
+
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
+const f  = v=>Math.round(v).toLocaleString('cs-CZ');
+const fK = v=>v>=1000?(v/1000).toFixed(0)+'k':Math.round(v)+'';
+const fKd= v=>(v/1000).toFixed(1)+'k';
+const p  = v=>(v*100).toFixed(1)+'%';
+const p2 = v=>(v*100).toFixed(2)+'%';
+const dp = v=>(v>=0?'+':'')+p(v);
+const pc = v=>v>0.28?'#DC2626':v>0.20?'#D97706':'#16A34A';
+const rc = v=>v>=7?'#16A34A':v>=4?'#D97706':'#DC2626';
+const openGrp = {a:'rev', b:'rev'};
+
+// ════════════════════════════════════════════════════════════
+// CEO FUNNEL
+// ════════════════════════════════════════════════════════════
+function renderCEO() {
+  const pr = ceoSide==='a' ? paramsA : paramsB;
+  const m  = compute(pr);
+  const ac = ceoSide==='a' ? '#16A34A' : '#EA580C';
+  
+  // Funnel steps
+  const steps = [
+    {icon:'👥', lbl:'Celkem sessions', val:fK(m.totalVis),
+     sub:'visitors / rok', vs:dp((m.totalVis-A25.sessions)/A25.sessions)+' vs 2025', c:'#60a5fa'},
+    {icon:'🔄', lbl:'Konverzní poměr', val:p2(pr.cvr),
+     sub:'CVR (2025: '+p2(A25.cvr)+')', vs:'', c:'#7C3AED'},
+    {icon:'📦', lbl:'Objednávky', val:f(Math.round(m.totalOrders)),
+     sub:'orders / rok', vs:dp((m.totalOrders-A25.orders)/A25.orders)+' vs 2025', c:'#D97706'},
+    {icon:'🏷️', lbl:'Průměr. objednávka', val:'€'+Math.round(pr.aov),
+     sub:'AOV (2025: €'+A25.aov+')', vs:'', c:'#16A34A'},
+    {icon:'💰', lbl:'Revenue celkem', val:'€'+fK(m.totalRev),
+     sub:'e-shop €'+fK(pr.totalRevGoal)+' + Dec €'+fK(pr.decathlonRev), vs:dp(m.vsActual)+' vs 2025', c:ac},
+    {icon:'📊', lbl:'Čistý zisk', val:'€'+fKd(m.netProfit),
+     sub:'marže − náklady', vs:'PNO '+p(m.pno), c:m.netProfit>=0?'#16A34A':'#DC2626'},
+  ];
+  
+  let fHtml = '';
+  for(let i=0;i<steps.length;i++){
+    const s=steps[i];
+    fHtml += `<div class="f-step">
+      <div class="f-box" style="border-color:${s.c}22">
+        <div class="f-icon">${s.icon}</div>
+        <div class="f-lbl">${s.lbl}</div>
+        <div class="f-val" style="color:${s.c}">${s.val}</div>
+        <div class="f-sub">${s.sub}</div>
+        <div class="f-vs" style="color:${s.vs?(s.vs.startsWith('+')||s.vs.startsWith('PNO')?s.vs.startsWith('PNO')?pc(m.pno):'#16A34A':'#DC2626'):'transparent'}">${s.vs||'·'}</div>
+      </div>
+    </div>`;
+    if(i<steps.length-1) fHtml+=`<div class="f-arr">→</div>`;
+  }
+  
+  // Channel table — simple % z celku + sessions + CVR + spend
+  const totalChRev = Object.values(m.chRev).reduce((a,b)=>a+b,0);
+  const maxRev = Math.max(...Object.values(m.chRev));
+  
+  const chMeta = [
+    {k:'organic',  color:'#34A853', label:'Organic Search', spend:pr.organic},
+    {k:'crossnet', color:'#4285F4', label:'Google Ads (Cross-network)', spend:m.googleSpend*(m.chRev['crossnet']/(m.chRev['crossnet']+m.chRev['paidsrch']||1))},
+    {k:'paidsrch', color:'#34D399', label:'Google Search (Brand kw)', spend:m.googleSpend*(m.chRev['paidsrch']/(m.chRev['crossnet']+m.chRev['paidsrch']||1))},
+    {k:'direct',   color:'#78909C', label:'Direct / Brand', spend:0},
+    {k:'paidsoc',  color:'#0668E1', label:'Meta Ads', spend:m.metaSpend},
+    {k:'unassign', color:'#4B5563', label:'Unassigned', spend:0},
+    {k:'referral', color:'#AB47BC', label:'Referral / PR', spend:pr.pr},
+    {k:'email',    color:'#FF9800', label:'Email', spend:pr.email},
+    {k:'orgsoc',   color:'#F59E0B', label:'Organic Social / SoMe', spend:0},
+    {k:'decathlon',color:'#0082C3', label:'Decathlon Marketplace', spend:pr.decathlonFee},
+  ];
+  
+  let tRows = '';
+  for(const ch of chMeta){
+    const rev   = m.chRev[ch.k] || (ch.k==='decathlon'?pr.decathlonRev:0);
+    const isDec  = ch.k==='decathlon';
+    const vis   = isDec ? 0 : (m.chVis[ch.k] || rev/(pr.cvr*pr.aov));
+    const pct   = rev/totalChRev;
+    const barW  = Math.round(rev/maxRev*100);
+    const pno2  = ch.spend&&rev ? ch.spend/rev : null;
+    // 2025 reference
+    const a25ch = A25.channels[ch.k];
+    const a25Rev= isDec ? A25.decathlonRev : (a25ch?a25ch.rev:0);
+    const a25Pct= a25Rev/A25.revenue;
+    tRows += `<tr>
+      <td><span class="dot" style="background:${ch.color}"></span>${ch.label}</td>
+      <td style="font-weight:600">€${f(rev)}</td>
+      <td class="bar-cell"><div class="bar-w"><div class="bar-f" style="width:${barW}%;background:${ch.color}99"></div></div></td>
+      <td>${p(pct)}</td>
+      <td style="color:#6B7280">${p(a25Pct)}</td>
+      <td>${isDec ? '—' : fK(vis)}</td>
+      <td>${isDec ? '—' : p2(pr.cvr)}</td>
+      <td style="color:${pno2?pc(pno2):'#6B7280'}">${pno2?p(pno2):'—'}</td>
+      <td>${ch.spend?'€'+f(ch.spend):'—'}</td>
+    </tr>`;
+  }
+  
+  document.getElementById('ceo-c').innerHTML = `
+<div class="ceo-wrap">
+  <div>
+    <div class="ctrl-box">
+      <div class="ctrl-head">Scénář</div>
+      <div class="sc-btns">
+        <button class="sc-btn${ceoSide==='a'?' on':''}" style="${ceoSide==='a'?'color:#16A34A;border-color:#16A34A;background:#DCFCE7':''}" onclick="setCEO('a')">A · ${scenLabel(paramsA)}</button>
+        <button class="sc-btn${ceoSide==='b'?' on':''}" style="${ceoSide==='b'?'color:#EA580C;border-color:#EA580C;background:#FFF7ED':''}" onclick="setCEO('b')">B · ${scenLabel(paramsB)}</button>
+      </div>
+      <div class="ctrl-head">Klíčové parametry</div>
+      ${mkSliderHTML('totalRevGoal',pr,'Revenue cíl (e-shop)','€300k','€700k',ac,v=>'€'+fK(v))}
+      ${mkSliderHTML('cvr',pr,'Konverzní poměr (CVR)','0.08 %','0.40 %','#a78bfa',v=>p2(v))}
+      ${mkSliderHTML('aov',pr,'AOV průměrná objednávka','€200','€600','#fbbf24',v=>'€'+Math.round(v))}
+      ${mkSliderHTML('googleBudget',pr,'Google Ads budget','€5k','€60k','#4285F4',v=>'€'+fK(v))}
+      ${mkSliderHTML('metaBudget',pr,'Meta Ads budget','€1k','€20k','#0668E1',v=>'€'+fK(v))}
+      ${mkSliderHTML('googleROAS',pr,'Google ROAS avg','2×','12×','#4285F4',v=>parseFloat(v).toFixed(1)+'×')}
+      ${mkSliderHTML('metaROAS',pr,'Meta ROAS avg','1.5×','9×','#0668E1',v=>parseFloat(v).toFixed(1)+'×')}
+    </div>
+    <div class="sum-strip">
+      <div class="sk" id="ceo-gspend"><div class="sk-l">Google spend</div><div class="sk-v" style="color:#4285F4">€${fK(m.googleSpend)}</div><div class="sk-s">rev €${fK(m.googleRevYear)} · ROAS ${pr.googleROAS.toFixed(1)}×</div></div>
+      <div class="sk" id="ceo-mspend"><div class="sk-l">Meta spend</div><div class="sk-v" style="color:#0668E1">€${fK(m.metaSpend)}</div><div class="sk-s">rev €${fK(m.metaRevYear)} · ROAS ${pr.metaROAS.toFixed(1)}×</div></div>
+      <div class="sk" id="ceo-cost"><div class="sk-l">Celk. náklady</div><div class="sk-v">€${fK(m.totalCost)}</div><div class="sk-s">${p(m.pno)} z rev.</div></div>
+      <div class="sk" id="ceo-pno"><div class="sk-l">PNO</div><div class="sk-v" style="color:${pc(m.pno)}">${p(m.pno)}</div><div class="sk-s">target &lt;20 %</div></div>
+      <div class="sk" id="ceo-profit"><div class="sk-l">Čistý zisk</div><div class="sk-v" style="color:${m.netProfit>=0?'#16A34A':'#DC2626'}">€${fKd(m.netProfit)}</div><div class="sk-s">marže−náklady</div></div>
+      <div class="sk" id="ceo-vis"><div class="sk-l">Visitors/rok</div><div class="sk-v" style="color:#60a5fa">${fK(m.totalVis)}</div><div class="sk-s">${f(Math.round(m.totalOrders))} orders</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="funnel-box">
+      <div class="f-title">Celý funnel · ${scenFullLabel(pr, ceoSide==='a'?'A':'B')}</div>
+      <div class="funnel">${fHtml}</div>
+    </div>
+    <div class="ch-box">
+      <div class="sec">Revenue po kanálech · GA4 data 2025 jako základ</div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>Kanál</th>
+            <th>Revenue ${scenLabel(pr)}</th>
+            <th style="min-width:80px"></th>
+            <th>% celku</th>
+            <th style="color:#6b7280">2025 %</th>
+            <th>Sessions</th>
+            <th>CVR</th>
+            <th>PNO</th>
+            <th>Spend</th>
+          </tr></thead>
+          <tbody>${tRows}</tbody>
+        </table>
+      </div>
+      <div class="note-box">
+        <strong>Zdroj: GA4 2025</strong> · Organic Search ${fK(A25.channels.organic.sessions)} sessions / €${fK(A25.channels.organic.rev)} rev ·
+        Google Ads ${fK(A25.channels.paidsrch.sessions)} PaidSearch + ${fK(A25.channels.crossnet.sessions)} CrossNet · Meta ${fK(A25.channels.paidsoc.sessions)} sessions GA4 ·
+        Direct ${fK(A25.channels.direct.sessions)} sessions / €${fK(A25.channels.direct.rev)} · Email CVR ${p2(A25.channels.email.cvr)} = nejlepší konverzní kanál
+      </div>
+    </div>
+  </div>
+</div>`;
+  
+  // Attach slider events
+  attachCEOSliders(pr);
+}
+
+function mkSliderHTML(key, pr, label, minLbl, maxLbl, color, fmt) {
+  const sl = CEO_SLIDERS.find(s=>s.key===key);
+  if(!sl) return '';
+  return `<div class="ctrl-row">
+    <div class="ctrl-lbl"><span>${label}</span><span class="ctrl-v" id="csl-${key}" style="color:${color}" title="Klikni pro ruční zadání">${fmt(pr[key])}</span></div>
+    <input type="range" min="${sl.min}" max="${sl.max}" step="${sl.step}" value="${pr[key]}"
+      style="accent-color:${color}" id="csr-${key}" oninput="onCEOSl('${key}',this.value)" data-ceokey="${key}">
+    <div class="ctrl-ends"><span>${minLbl}</span><span>${maxLbl}</span></div>
+  </div>`;
+}
+
+function attachCEOSliders(pr) {
+  // handled via oninput already
+}
+
+const CEO_SLIDERS = [
+  {key:'totalRevGoal',min:300000,max:700000,step:5000,  fmt:v=>'€'+fK(v)},
+  {key:'cvr',         min:0.0008,max:0.004, step:0.00005,fmt:v=>p2(v)},
+  {key:'aov',         min:200,   max:600,   step:5,     fmt:v=>'€'+Math.round(v)},
+  {key:'googleBudget',min:5000,  max:60000, step:500,   fmt:v=>'€'+fK(v)},
+  {key:'metaBudget',  min:1000,  max:20000, step:250,   fmt:v=>'€'+fK(v)},
+  {key:'googleROAS',  min:2,     max:12,    step:0.1,   fmt:v=>parseFloat(v).toFixed(1)+'×'},
+  {key:'metaROAS',    min:1.5,   max:9,     step:0.1,   fmt:v=>parseFloat(v).toFixed(1)+'×'},
+];
+
+function onCEOSl(key, val) {
+  const pr = ceoSide==='a' ? paramsA : paramsB;
+  pr[key] = parseFloat(val);
+  const sl = CEO_SLIDERS.find(s=>s.key===key);
+  const el = document.getElementById('csl-'+key);
+  if(el && sl) el.textContent = sl.fmt(pr[key]);
+  // live: update summary strip only (no innerHTML rebuild = slider stays alive)
+  const m = compute(pr);
+  const ac = ceoSide==='a' ? '#16A34A' : '#EA580C';
+  const upd = {
+    'ceo-gspend': ['€'+fK(m.googleSpend), 'rev €'+fK(m.googleRevYear)+' · ROAS '+pr.googleROAS.toFixed(1)+'×'],
+    'ceo-mspend': ['€'+fK(m.metaSpend),   'rev €'+fK(m.metaRevYear)+' · ROAS '+pr.metaROAS.toFixed(1)+'×'],
+    'ceo-cost':   ['€'+fK(m.totalCost),   p(m.pno)+' z rev.'],
+    'ceo-pno':    [p(m.pno),              'target <20 %'],
+    'ceo-profit': ['€'+fKd(m.netProfit),  'marže−náklady'],
+    'ceo-vis':    [fK(m.totalVis),        f(Math.round(m.totalOrders))+' orders'],
+  };
+  for(const [id,[v,s]] of Object.entries(upd)){
+    const el=document.getElementById(id); if(!el) continue;
+    el.querySelector('.sk-v').textContent=v;
+    el.querySelector('.sk-s').textContent=s;
+  }
+}
+function onCEOSlDone(key, val) {
+  onCEOSl(key, val);
+  renderCEO();
+}
+
+// ════════════════════════════════════════════════════════════
+// MODELS VIEW
+// ════════════════════════════════════════════════════════════
+const SLIDERS = [
+  {key:'totalRevGoal', label:'Revenue cíl (e-shop)',    min:300000,max:700000,step:5000,  fmt:v=>'€'+f(v),          grp:'rev',note:'bez Decathlonu'},
+  {key:'decathlonRev', label:'Decathlon (extra navíc)',min:0,     max:250000,step:5000,  fmt:v=>'€'+f(v),          grp:'rev',note:'přičte se k revenue'},
+  {key:'marginRate',   label:'Marže %',                min:0.14,  max:0.28,  step:0.005, fmt:v=>p(v),              grp:'rev',note:'2025: '+p(A25.revenue?0.205:0.195)},
+  {key:'cvr',          label:'CVR konverzní poměr',    min:0.0008,max:0.004, step:0.00005,fmt:v=>p2(v),            grp:'rev',note:'GA4 2025: '+p2(A25.cvr)},
+  {key:'aov',          label:'AOV prům. objednávka',   min:200,   max:600,   step:5,     fmt:v=>'€'+Math.round(v), grp:'rev',note:'GA4 2025: €'+A25.aov},
+  {key:'decathlonAov', label:'Decathlon AOV',           min:100,   max:500,   step:5,     fmt:v=>'€'+Math.round(v), grp:'rev',note:'jiná AOV než e-shop'},
+  {key:'googleBudget', label:'Google Ads budget (rok)', min:5000,  max:60000, step:500,   fmt:v=>'€'+f(v),          grp:'ch', note:'spend → rev via ROAS'},
+  {key:'metaBudget',   label:'Meta Ads budget (rok)',  min:1000,  max:20000, step:250,   fmt:v=>'€'+f(v),          grp:'ch', note:'spend → rev via ROAS'},
+  {key:'googleROAS',   label:'Google ROAS avg',        min:2,     max:12,    step:0.1,   fmt:v=>v.toFixed(1)+'×',  grp:'ch', note:'2025: '+(gAvg).toFixed(1)+'×'},
+  {key:'metaROAS',     label:'Meta ROAS avg',          min:1.5,   max:9,     step:0.1,   fmt:v=>v.toFixed(1)+'×',  grp:'ch', note:'2025: '+(mAvg).toFixed(1)+'×'},
+  {key:'shareOrganic', label:'Organic → % revenue',   min:0.20,  max:0.55,  step:0.01,  fmt:v=>p(v),              grp:'ch', note:'GA4 2025: '+p(A25.channels.organic.rev/A25.revenue)},
+  {key:'management',   label:'Management / Agentura',  min:5000,  max:35000, step:500,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.management)},
+  {key:'organic',      label:'Organic / SEO / Blog',   min:0,     max:18000, step:500,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.organic)},
+  {key:'email',        label:'Email / Newsletter',     min:0,     max:6000,  step:100,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.email)},
+  {key:'pr',           label:'PR / Influenceři',       min:0,     max:25000, step:500,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.pr)},
+  {key:'decathlonFee', label:'Marketplace poplatek',    min:0,     max:10000, step:250,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.decathlonFee)},
+  {key:'other',        label:'Ostatní náklady',         min:0,     max:5000,  step:100,   fmt:v=>'€'+f(v),          grp:'fix',note:'2025: €'+f(A25.other)},
+];
+const GROUPS={
+  rev:{label:'Revenue, CVR & AOV',color:'#f59e0b'},
+  ch: {label:'Kanály & ROAS',     color:'#60a5fa'},
+  fix:{label:'Fixní náklady',     color:'#7C3AED'},
+};
+
+function renderPanel(side, pr, m, ac, tag) {
+  const vsColor = m.vsActual>=0?'#16A34A':'#DC2626';
+  const costP=m.totalCost/m.totalRev, profP=Math.max(0,m.netProfit/m.totalRev);
+  
+  let slidersHtml='';
+  for(const[grp,g] of Object.entries(GROUPS)){
+    const gS=SLIDERS.filter(s=>s.grp===grp);
+    const isOpen=openGrp[side]===grp;
+    let rows='';
+    for(const sl of gS){
+      const val=pr[sl.key];
+      rows+=`<div class="slr">
+        <div class="slt">
+          <div><span class="sll">${sl.label}</span>${sl.note?`<span class="sln"> · ${sl.note}</span>`:''}</div>
+          <span class="slv" id="sv-${side}-${sl.key}" style="color:${g.color}" title="Klikni pro ruční zadání">${sl.fmt(val)}</span>
+        </div>
+        <input type="range" class="slrange" min="${sl.min}" max="${sl.max}" step="${sl.step}" value="${val}"
+          style="accent-color:${g.color}" oninput="onSl('${side}','${sl.key}',this.value)" data-side="${side}" data-key="${sl.key}">
+        <div class="sle"><span>${sl.fmt(sl.min)}</span><span>${sl.fmt(sl.max)}</span></div>
+      </div>`;
+    }
+    slidersHtml+=`<div class="grpb">
+      <button class="gh" style="color:${g.color}" onclick="tGrp('${side}','${grp}')">
+        <span class="gdot" style="background:${g.color}"></span>${g.label}
+        <span class="garr" id="arr-${side}-${grp}">${isOpen?'▲':'▼'}</span>
+      </button>
+      <div class="gsl${isOpen?' open':''}" id="grp-${side}-${grp}">${rows}</div>
+    </div>`;
+  }
+  
+  const cItems=[
+    {l:'Google Ads',  v:m.googleSpend,      c:'#4285F4'},
+    {l:'Meta Ads',    v:m.metaSpend,        c:'#0668E1'},
+    {l:'Decathlon fee',v:pr.decathlonFee,   c:'#0082C3'},
+    {l:'Organic/SEO', v:pr.organic,         c:'#34A853'},
+    {l:'Email',       v:pr.email,           c:'#FF9800'},
+    {l:'PR/Influ',    v:pr.pr,              c:'#AB47BC'},
+    {l:'Management',  v:pr.management,      c:'#78909C'},
+  ];
+  let costHtml='';
+  for(const ci of cItems){
+    const w=Math.min(100,ci.v/m.totalRev*100);
+    costHtml+=`<div class="crow"><div class="clbl">${ci.l}</div><div class="ctrk"><div class="cfil" style="width:${w}%;background:${ci.c}"></div></div><div class="cval">€${f(ci.v)}</div><div class="cpct">${p(ci.v/m.totalRev)}</div></div>`;
+  }
+  
+  document.getElementById('panel-'+side).className='panel';
+  document.getElementById('panel-'+side).style.borderTop=`3px solid ${ac}`;
+  document.getElementById('panel-'+side).innerHTML=`
+<div class="p-head">
+  <div>
+    <div class="p-title" style="color:${ac}">${scenFullLabel(pr, side==='a'?'A':'B')}</div>
+    <button class="copy-btn" onclick="copyParams('${side}')" title="Zkopírovat hodnoty do scénáře ${side==='a'?'B':'A'}">📋 Kopírovat do ${side==='a'?'B':'A'}</button>
+  </div>
+  <div>
+    <div class="p-rev">€${f(m.totalRev)}</div>
+    <div class="p-vs" style="color:${vsColor}">${dp(m.vsActual)} vs 2025</div>
+  </div>
+</div>
+<div class="kstrip">
+  <div class="kb"><div class="kl">Google spend</div><div class="kv" id="kv-${side}-googleSpend">€${fKd(m.googleSpend)}</div><div class="ks" id="ks-${side}-googleROAS">rev €${fK(m.googleRevYear)} · ROAS ${pr.googleROAS.toFixed(1)}×</div></div>
+  <div class="kb"><div class="kl">Meta spend</div><div class="kv" id="kv-${side}-metaSpend">€${fKd(m.metaSpend)}</div><div class="ks" id="ks-${side}-metaROAS">rev €${fK(m.metaRevYear)} · ROAS ${pr.metaROAS.toFixed(1)}×</div></div>
+  <div class="kb"><div class="kl">Visitors/rok</div><div class="kv" id="kv-${side}-vis">${fK(m.totalVis)}</div><div class="ks" id="ks-${side}-cvr">CVR ${p2(pr.cvr)}</div></div>
+  <div class="kb"><div class="kl">Orders</div><div class="kv" id="kv-${side}-orders">${f(Math.round(m.totalOrders))}</div><div class="ks" id="ks-${side}-aov">AOV €${Math.round(pr.aov)}</div></div>
+  <div class="kb"><div class="kl">PNO</div><div class="kv" id="kv-${side}-pno" style="color:${pc(m.pno)}">${p(m.pno)}</div><div class="ks">nákl./revenue</div></div>
+  <div class="kb"><div class="kl">Čistý zisk</div><div class="kv" id="kv-${side}-profit" style="color:${m.netProfit>=0?'#16A34A':'#DC2626'}">€${fKd(m.netProfit)}</div><div class="ks">marže−náklady</div></div>
+</div>
+<div class="wf">
+  <div class="wf-t">
+    <div class="wf-s" style="width:${p(costP)};background:#EF444499"></div>
+    <div class="wf-s" style="width:${p(profP)};background:#16A34A99"></div>
+    <div class="wf-s" style="flex:1;background:#374151"></div>
+  </div>
+  <div class="wf-leg">
+    <div class="ld"><div class="ldsq" style="background:#EF4444"></div>Náklady ${p(costP)}</div>
+    <div class="ld"><div class="ldsq" style="background:#16A34A"></div>Zisk ${p(Math.max(0,m.netProfit/m.totalRev))}</div>
+  </div>
+</div>
+<div style="margin-top:9px">${slidersHtml}</div>
+<div style="margin-top:10px"><div class="sec">Struktura nákladů</div><div class="cbars">${costHtml}</div></div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// SVG LINE OVERLAY + REALITY TRACKER
+// ════════════════════════════════════════════════════════════
+function renderBarLineOverlay(mA, mB) {
+  const SVG_W=1200, SVG_H=120, COL_W=SVG_W/12, BAR_H_MAX=86, BASE_Y=SVG_H-2;
+  const maxR=Math.max(...mA.months.map(m=>m.tot),...mB.months.map(m=>m.tot),...A25.monthlyRev,...A25.reality2026);
+  const yOf=val=>BASE_Y-(val/maxR*BAR_H_MAX);
+  const xOf=i=>(i+0.5)*COL_W;
+  function smooth(pts){
+    if(pts.length<2) return '';
+    let d=`M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+    for(let i=1;i<pts.length;i++){
+      const p=pts[i-1],c=pts[i],cx=(p.x+c.x)/2;
+      d+=` C ${cx.toFixed(1)},${p.y.toFixed(1)} ${cx.toFixed(1)},${c.y.toFixed(1)} ${c.x.toFixed(1)},${c.y.toFixed(1)}`;
+    }
+    return d;
+  }
+  const ptsA=mA.months.map((m,i)=>({x:xOf(i),y:yOf(m.tot)}));
+  const ptsR=A25.reality2026.map((v,i)=>v>0?{x:xOf(i),y:yOf(v)}:null).filter(Boolean);
+  const dots=(pts,col,r=5)=>pts.map(pt=>`<circle cx="${pt.x.toFixed(1)}" cy="${pt.y.toFixed(1)}" r="${r}" fill="${col}" stroke="white" stroke-width="2.5"/>`).join('');
+  const dA=smooth(ptsA), dR=smooth(ptsR);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${SVG_W} ${SVG_H}" preserveAspectRatio="none"
+    style="position:absolute;top:0;left:0;width:100%;height:${SVG_H}px;pointer-events:none;overflow:visible">
+    ${dA?`<path d="${dA}" fill="none" stroke="#16A34A" stroke-width="3" stroke-linejoin="round"/>`:''}
+    ${dots(ptsA,'#16A34A')}
+    ${dR?`<path d="${dR}" fill="none" stroke="#7C3AED" stroke-width="3" stroke-dasharray="8,5" stroke-linejoin="round"/>`:''}
+    ${ptsR.length?dots(ptsR,'#7C3AED'):''}
+  </svg>`;
+}
+
+function renderRealityPanel(mA) {
+  const ytdReal=A25.reality2026.reduce((s,v)=>s+v,0);
+  const monthsWithData=A25.reality2026.filter(v=>v>0).length;
+  const ytdPlanA=mA.months.reduce((s,m,i)=>A25.reality2026[i]>0?s+m.tot:s,0);
+  const ytdDiff=monthsWithData>0?(ytdReal-ytdPlanA)/(ytdPlanA||1):null;
+  let cells='';
+  for(let i=0;i<12;i++){
+    const val=A25.reality2026[i],isFuture=i>NOW_MONTH,hasVal=val>0;
+    cells+=`<div class="rt-cell"><div class="rt-lbl">${MONTHS[i]}</div>
+      <input type="number" class="rt-inp${isFuture?' future':''}${hasVal?' has-val':''}"
+        value="${hasVal?val:''}" placeholder="${isFuture?'—':'0'}" min="0" step="100"
+        data-rtidx="${i}" onchange="onRealityChange(${i},this.value)"
+        title="${MONTHS_F[i]} · Reality 2026"></div>`;
+  }
+  const ytdHtml=monthsWithData>0
+    ?`YTD: <strong>€${f(ytdReal)}</strong> &nbsp;|&nbsp; vs Plán A: <strong style="color:${ytdDiff>=0?'#16A34A':'#DC2626'}">${dp(ytdDiff)}</strong>`
+    :'Zatím žádná data';
+  return `<div class="rtpanel"><div class="rtpanel-head">
+    <div class="rtpanel-title">📊 Reality Tracker 2026 — upravitelné</div>
+    <div class="rtpanel-kpis">${ytdHtml}</div></div>
+    <div class="rt-grid">${cells}</div></div>`;
+}
+
+function onRealityChange(idx, rawVal) {
+  A25.reality2026[idx]=rawVal===''?0:Math.max(0,parseInt(rawVal,10)||0);
+  lsSaveReality();
+  renderMonthly(compute(paramsA),compute(paramsB));
+}
+
+// ════════════════════════════════════════════════════════════
+// MONTHLY VIEW
+// ════════════════════════════════════════════════════════════
+function renderMonthly(mA, mB) {
+  const maxR=Math.max(...mA.months.map(m=>m.tot),...mB.months.map(m=>m.tot),...A25.monthlyRev,...A25.reality2026);
+  let cols='';
+  for(let i=0;i<12;i++){
+    const hAct=A25.monthlyRev[i]/maxR*86,hA=mA.months[i].tot/maxR*86,hB=mB.months[i].tot/maxR*86;
+    const real=A25.reality2026[i];
+    cols+=`<div class="cc"><div class="cbs">
+      <div class="cb" style="width:22%;height:${hAct}px;background:#D1D5DB" title="2025: €${f(A25.monthlyRev[i])}"></div>
+      <div class="cb" style="width:22%;height:${hA}px;background:#DCFCE7;border:1px solid #16A34A" title="A: €${f(mA.months[i].tot)}"></div>
+      <div class="cb" style="width:22%;height:${hB}px;background:#FED7AA;border:1px solid #EA580C" title="B: €${f(mB.months[i].tot)}"></div>
+      ${real?`<div class="cb" style="width:22%;height:${real/maxR*86}px;background:#EDE9FE;border:1px solid #7C3AED" title="Reality: €${f(real)}"></div>`:'<div style="width:22%"></div>'}
+    </div><div class="cl">${MONTHS[i]}</div></div>`;
+  }
+  
+  let tRows='';
+  for(let i=0;i<12;i++){
+    const a=mA.months[i],b=mB.months[i];
+    const real=A25.reality2026[i];
+    const planA=mA.months[i].tot;
+    const diff=real?(real-planA)/planA:null;
+    tRows+=`<tr>
+      <td style="font-weight:600">${MONTHS_F[i]}</td>
+      <td style="color:#6B7280">€${f(A25.monthlyRev[i])}</td>
+      ${real?`<td style="color:#7C3AED;font-weight:600">€${f(real)}</td><td style="color:${diff>=0?'#16A34A':'#DC2626'}">${dp(diff)}</td>`:`<td style="color:#D1D5DB">—</td><td></td>`}
+      <td style="color:#16A34A;font-weight:600">€${f(a.tot)}</td>
+      <td>€${f(a.google)}</td><td>€${f(a.meta)}</td>
+      <td style="color:${rc(a.gROAS)}">${a.gROAS.toFixed(1)}×</td>
+      <td style="color:${rc(a.mROAS)}">${a.mROAS.toFixed(1)}×</td>
+      <td style="color:${pc(a.pno)}">${p(a.pno)}</td>
+      <td style="color:#EA580C;font-weight:600">€${f(b.tot)}</td>
+      <td>€${f(b.google)}</td><td>€${f(b.meta)}</td>
+      <td style="color:${pc(b.pno)}">${p(b.pno)}</td>
+    </tr>`;
+  }
+  const sA=mA.months.reduce((s,m)=>({t:s.t+m.tot,g:s.g+m.google,m:s.m+m.meta}),{t:0,g:0,m:0});
+  const sB=mB.months.reduce((s,m)=>({t:s.t+m.tot,g:s.g+m.google,m:s.m+m.meta}),{t:0,g:0,m:0});
+  
+  document.getElementById('monthly-c').innerHTML=`
+<div class="sec">Měsíční rozpad · sezónní profil z 2025 + reality tracker</div>
+${renderRealityPanel(mA)}
+<div class="card">
+  <div class="ctitle">Revenue po měsících</div>
+  <div class="chw">${cols}${renderBarLineOverlay(mA,mB)}</div>
+  <div class="wf-leg" style="margin-top:8px">
+    <div class="ld"><div class="ldsq" style="background:#D1D5DB"></div>2025 skutečnost</div>
+    <div class="ld"><div class="ldsq" style="background:#16A34A"></div>Scénář A (${scenLabel(paramsA)})</div>
+    <div class="ld"><div class="ldsq" style="background:#EA580C"></div>Scénář B (${scenLabel(paramsB)})</div>
+    <div class="ld"><div class="ldsq" style="background:#7C3AED"></div>Reality 2026</div>
+  </div>
+</div>
+<div style="overflow-x:auto"><table>
+<thead>
+  <tr>
+    <th>Měsíc</th><th style="color:#6b7280">2025</th>
+    <th colspan="2" style="color:#7C3AED">Reality 2026</th>
+    <th colspan="6" style="color:#16A34A;text-align:center">Scénář A · ${scenLabel(paramsA)}</th>
+    <th colspan="4" style="color:#EA580C;text-align:center">Scénář B · ${scenLabel(paramsB)}</th>
+  </tr>
+  <tr style="font-size:8px;color:#4b5563">
+    <th></th><th>Rev.</th><th>Rev.</th><th>vs plán A</th>
+    <th>Revenue</th><th>G spend</th><th>M spend</th><th>G ROAS</th><th>M ROAS</th><th>PNO</th>
+    <th>Revenue</th><th>G spend</th><th>M spend</th><th>PNO</th>
+  </tr>
+</thead>
+<tbody>${tRows}
+<tr style="border-top:2px solid var(--border-strong);font-weight:700">
+  <td>TOTAL</td><td style="color:#6B7280">€${f(A25.revenue)}</td><td colspan="2"></td>
+  <td style="color:#16A34A">€${f(sA.t)}</td><td>€${f(sA.g)}</td><td>€${f(sA.m)}</td><td></td><td></td>
+  <td style="color:${pc(mA.pno)}">${p(mA.pno)}</td>
+  <td style="color:#EA580C">€${f(sB.t)}</td><td>€${f(sB.g)}</td><td>€${f(sB.m)}</td>
+  <td style="color:${pc(mB.pno)}">${p(mB.pno)}</td>
+</tr>
+</tbody></table></div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// COMPARE VIEW
+// ════════════════════════════════════════════════════════════
+function renderCompare(pA, pB, mA, mB) {
+  const rows=[
+    {l:'Revenue celkem',  a:mA.totalRev,b:mB.totalRev,fmt:v=>'€'+f(v),diff:true,bold:true,aC:'#16A34A',bC:'#EA580C'},
+    {l:'z toho e-shop',   a:pA.totalRevGoal,b:pB.totalRevGoal,fmt:v=>'€'+f(v)},
+    {l:'z toho Decathlon', a:pA.decathlonRev,b:pB.decathlonRev,fmt:v=>'€'+f(v)},
+    {l:'vs 2025',         a:mA.vsActual,    b:mB.vsActual,    fmt:v=>dp(v)},
+    {l:'Visitors/rok',    a:mA.totalVis,    b:mB.totalVis,    fmt:v=>fK(v),diff:true},
+    {l:'CVR',             a:pA.cvr,         b:pB.cvr,         fmt:v=>p2(v)},
+    {l:'Orders',          a:mA.totalOrders, b:mB.totalOrders, fmt:v=>f(Math.round(v)),diff:true},
+    {l:'AOV',             a:pA.aov,         b:pB.aov,         fmt:v=>'€'+Math.round(v)},
+    {sep:true},
+    {l:'Google spend',    a:mA.googleSpend, b:mB.googleSpend, fmt:v=>'€'+f(v),diff:true},
+    {l:'Google ROAS avg', a:pA.googleROAS,  b:pB.googleROAS,  fmt:v=>v.toFixed(1)+'×'},
+    {l:'Meta spend',      a:mA.metaSpend,   b:mB.metaSpend,   fmt:v=>'€'+f(v),diff:true},
+    {l:'Meta ROAS avg',   a:pA.metaROAS,    b:pB.metaROAS,    fmt:v=>v.toFixed(1)+'×'},
+    {l:'Paid spend',      a:mA.paidSpend,   b:mB.paidSpend,   fmt:v=>'€'+f(v),diff:true},
+    {l:'Fixní náklady',   a:mA.fixedCosts,  b:mB.fixedCosts,  fmt:v=>'€'+f(v)},
+    {l:'Celk. náklady',   a:mA.totalCost,   b:mB.totalCost,   fmt:v=>'€'+f(v),bold:true},
+    {sep:true},
+    {l:'Hrubá marže',     a:mA.grossMargin, b:mB.grossMargin, fmt:v=>'€'+f(v)},
+    {l:'Čistý zisk',      a:mA.netProfit,   b:mB.netProfit,   fmt:v=>'€'+f(v),bold:true,
+      aC:mA.netProfit>=0?'#16A34A':'#DC2626',bC:mB.netProfit>=0?'#16A34A':'#DC2626'},
+    {l:'PNO',             a:mA.pno,         b:mB.pno,         fmt:p,aC:pc(mA.pno),bC:pc(mB.pno)},
+  ];
+  let tRows='';
+  for(const r of rows){
+    if(r.sep){tRows+=`<tr><td colspan="4" style="color:var(--border-strong);font-size:7px;padding:1px 8px">──────────────────────────</td></tr>`;continue;}
+    const delta=r.diff?`<span style="color:${(r.b-r.a)>=0?'#16A34A':'#DC2626'}">${dp((r.b-r.a)/Math.abs(r.a||1))}</span>`:'—';
+    tRows+=`<tr><td style="color:var(--text-muted);font-weight:${r.bold?600:400}">${r.l}</td><td style="color:${r.aC||'var(--text)'};font-weight:${r.bold?600:400}">${r.fmt(r.a)}</td><td style="color:${r.bC||'var(--text)'};font-weight:${r.bold?600:400}">${r.fmt(r.b)}</td><td>${delta}</td></tr>`;
+  }
+  const minis=[
+    {l:'Čistý zisk',   a:mA.netProfit,   b:mB.netProfit,   fmt:v=>'€'+fKd(v),max:Math.max(Math.abs(mA.netProfit),Math.abs(mB.netProfit))*1.2||1,aC:'#16A34A',bC:'#EA580C'},
+    {l:'PNO',          a:mA.pno,         b:mB.pno,         fmt:p,max:.35,aC:'#16A34A',bC:'#EA580C'},
+    {l:'Google spend', a:mA.googleSpend, b:mB.googleSpend, fmt:v=>'€'+fKd(v),max:Math.max(mA.googleSpend,mB.googleSpend)*1.2,aC:'#4285F4',bC:'#EA580C'},
+    {l:'Visitors',     a:mA.totalVis,    b:mB.totalVis,    fmt:v=>fK(v),max:Math.max(mA.totalVis,mB.totalVis)*1.2,aC:'#4285F4',bC:'#EA580C'},
+  ];
+  let miniHtml='';
+  for(const mc of minis){
+    const hA=Math.abs(mc.a)/mc.max*38,hB=Math.abs(mc.b)/mc.max*38;
+    miniHtml+=`<div class="mc"><div class="ctitle">${mc.l}</div><div class="mbars">
+      <div class="mbw"><div class="mbt"><div class="mbf" style="height:${hA}px;background:${mc.aC}33;border:1px solid ${mc.aC}"></div></div><div class="mbv" style="color:${mc.aC}">${mc.fmt(mc.a)}</div><div class="mbl">Scén. A</div></div>
+      <div class="mbw"><div class="mbt"><div class="mbf" style="height:${hB}px;background:${mc.bC}33;border:1px solid ${mc.bC}"></div></div><div class="mbv" style="color:${mc.bC}">${mc.fmt(mc.b)}</div><div class="mbl">Scén. B</div></div>
+    </div></div>`;
+  }
+  document.getElementById('compare-c').innerHTML=`
+<div class="cmp-grid">
+  <div>
+    <div class="sec">Srovnání scénářů A vs B</div>
+    <div class="card"><table><thead><tr><th>Metrika</th><th style="color:#16A34A">A · ${scenLabel(pA)}</th><th style="color:#EA580C">B · ${scenLabel(pB)}</th><th>Δ B vs A</th></tr></thead><tbody>${tRows}</tbody></table></div>
+    <div class="mg4">${miniHtml}</div>
+  </div>
+  <div>
+    <div class="sec">Reference 2025 (GA4 data)</div>
+    <div class="card">
+      <div class="rr"><span class="rl">Revenue (GA4)</span><span class="rv">€${ef(A25.revenue)}</span></div>
+      <div class="rr"><span class="rl">Sessions</span><span class="rv">${ef(A25.sessions)}</span></div>
+      <div class="rr"><span class="rl">CVR (GA4)</span><span class="rv">${epct(A25.cvr)}</span></div>
+      <div class="rr"><span class="rl">Orders (GA4)</span><span class="rv">${ef(A25.orders)}</span></div>
+      <div class="rr"><span class="rl">AOV (GA4)</span><span class="rv">€${A25.aov}</span></div>
+      <div class="rr"><span class="rl">Organic Search sessions</span><span class="rv">${ef(A25.channels.organic.sessions)} (${epct(A25.channels.organic.sessions/A25.sessions)})</span></div>
+      <div class="rr"><span class="rl">Organic Search revenue</span><span class="rv">€${ef(A25.channels.organic.rev)} (${epct(A25.channels.organic.rev/A25.revenue)})</span></div>
+      <div class="rr"><span class="rl">Direct revenue</span><span class="rv">€${ef(A25.channels.direct.rev)} (${epct(A25.channels.direct.rev/A25.revenue)})</span></div>
+      <div class="rr"><span class="rl">CrossNet (Google Ads)</span><span class="rv">€${ef(A25.channels.crossnet.rev)} (${epct(A25.channels.crossnet.rev/A25.revenue)})</span></div>
+      <div class="rr"><span class="rl">Paid Search (Brand)</span><span class="rv">€${ef(A25.channels.paidsrch.rev)} (${epct(A25.channels.paidsrch.rev/A25.revenue)})</span></div>
+      <div class="rr"><span class="rl">Meta (GA4 Paid Social)</span><span class="rv">€${ef(A25.channels.paidsoc.rev)} (${epct(A25.channels.paidsoc.rev/A25.revenue)})*</span></div>
+      <div class="rr"><span class="rl">Google spend</span><span class="rv">€${ef(A25.channels.crossnet.spend)}</span></div>
+      <div class="rr"><span class="rl">Meta spend</span><span class="rv">€${ef(A25.channels.paidsoc.spend)}</span></div>
+      <div class="rr"><span class="rl">Google ROAS (ads dashboard)</span><span class="rv">${(A25.channels.crossnet.rev/A25.channels.crossnet.spend).toFixed(2)}×</span></div>
+      <div class="rr"><span class="rl">Meta ROAS (Meta dashboard)</span><span class="rv">${(A25.channels.paidsoc.rev/A25.channels.paidsoc.spend).toFixed(2)}×</span></div>
+      <div class="rnote">* Meta GA4 vs Meta dashboard: GA4 ukazuje last-click, Meta dashboard post-view+click (7d). Skutečnost leží mezi.
+        <br>📅 Reality 2026: Led €${ef(A25.reality2026[0])} · Úno €${ef(A25.reality2026[1])}</div>
+    </div>
+  </div>
+</div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+// INTERACTIONS
+// ════════════════════════════════════════════════════════════
+function sv(id, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('view-'+id).classList.add('on');
+  btn.classList.add('on');
+  rerender(id);
+}
+function setCEO(side){ ceoSide=side; renderCEO(); }
+function onSl(side, key, val){
+  const pr=side==='a'?paramsA:paramsB;
+  const sl=SLIDERS.find(s=>s.key===key);
+  pr[key]=parseFloat(val);
+  // live: update just the label value display
+  const el=document.getElementById('sv-'+side+'-'+key);
+  if(el&&sl) el.textContent=sl.fmt(pr[key]);
+  // live: update kstrip numbers without rebuilding panel innerHTML
+  const m=compute(pr);
+  const liveIds={
+    [`kv-${side}-googleSpend`]:  '€'+fKd(m.googleSpend),
+    [`ks-${side}-googleROAS`]:   'rev €'+fK(m.googleRevYear)+' · ROAS '+pr.googleROAS.toFixed(1)+'×',
+    [`kv-${side}-metaSpend`]:    '€'+fKd(m.metaSpend),
+    [`ks-${side}-metaROAS`]:     'rev €'+fK(m.metaRevYear)+' · ROAS '+pr.metaROAS.toFixed(1)+'×',
+    [`kv-${side}-vis`]:          fK(m.totalVis),
+    [`ks-${side}-cvr`]:          'CVR '+p2(pr.cvr),
+    [`kv-${side}-orders`]:       f(Math.round(m.totalOrders)),
+    [`ks-${side}-aov`]:          'AOV €'+Math.round(pr.aov),
+    [`kv-${side}-pno`]:          p(m.pno),
+    [`kv-${side}-profit`]:       '€'+fKd(m.netProfit),
+  };
+  for(const[id,v] of Object.entries(liveIds)){
+    const e=document.getElementById(id); if(e) e.textContent=v;
+  }
+}
+function onSlDone(side, key, val){
+  onSl(side, key, val);
+  const pr=side==='a'?paramsA:paramsB;
+  const m=compute(pr);
+  renderPanel(side,pr,m,side==='a'?'#16A34A':'#EA580C',side==='a'?'35% GROWTH':'70% GROWTH');
+  const av=[...document.querySelectorAll('.view.on')].map(v=>v.id.replace('view-',''))[0];
+  const mA=compute(paramsA),mB=compute(paramsB);
+  if(av==='monthly') renderMonthly(mA,mB);
+  if(av==='compare') renderCompare(paramsA,paramsB,mA,mB);
+}
+
+// Pointerup delegation — spustí rerender až po puštění slideru
+// Funguje pro myš i dotyk, neruší tažení
+function _sliderDone(e) {
+  const t = e.target;
+  if(t.classList.contains('slrange')) {
+    const side = t.dataset.side, key = t.dataset.key;
+    if(side && key) onSlDone(side, key, t.value);
+  }
+  if(t.dataset && t.dataset.ceokey) {
+    onCEOSlDone(t.dataset.ceokey, t.value);
+  }
+}
+document.addEventListener('pointerup', _sliderDone);
+document.addEventListener('touchend',  _sliderDone);
+
+// ── Editable slider values: click on value → inline input ──
+document.addEventListener('click', function(e) {
+  // Models view: .slv elements with id="sv-{side}-{key}"
+  const slv = e.target.closest('.slv');
+  if(slv && slv.id && slv.id.startsWith('sv-')) {
+    const parts = slv.id.replace('sv-','').split('-');
+    const side = parts[0], key = parts.slice(1).join('-');
+    const sl = SLIDERS.find(s=>s.key===key);
+    if(!sl) return;
+    _makeEditable(slv, sl, side, key, 'models');
+    return;
+  }
+  // CEO view: .ctrl-v elements with id="csl-{key}"
+  const cv = e.target.closest('.ctrl-v');
+  if(cv && cv.id && cv.id.startsWith('csl-')) {
+    const key = cv.id.replace('csl-','');
+    const sl = CEO_SLIDERS.find(s=>s.key===key);
+    if(!sl) return;
+    _makeEditable(cv, sl, ceoSide, key, 'ceo');
+    return;
+  }
+});
+
+function _makeEditable(el, sl, side, key, mode) {
+  if(el.querySelector('input')) return; // already editing
+  const pr = side==='a' ? paramsA : paramsB;
+  const rawVal = pr[key];
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.value = _rawDisplay(rawVal, sl);
+  inp.style.cssText = 'width:110px;text-align:right;font-size:inherit;font-weight:inherit;color:inherit;background:#1e293b;border:1px solid #60a5fa;border-radius:4px;padding:2px 6px;outline:none;box-shadow:0 0 0 2px rgba(96,165,250,.25);';
+  el.textContent = '';
+  el.appendChild(inp);
+  inp.focus();
+  inp.select();
+  function apply() {
+    let v = _parseInput(inp.value, sl);
+    if(isNaN(v)) v = rawVal;
+    // snap to step, but do NOT clamp to slider min/max
+    v = Math.round(v / sl.step) * sl.step;
+    pr[key] = v;
+    el.textContent = sl.fmt(v);
+    // sync range slider
+    if(mode==='models') {
+      const range = document.querySelector(`input.slrange[data-side="${side}"][data-key="${key}"]`);
+      if(range) range.value = v;
+      onSlDone(side, key, v);
+    } else {
+      const range = document.getElementById('csr-'+key);
+      if(range) range.value = v;
+      onCEOSlDone(key, v);
+    }
+  }
+  let applied = false;
+  inp.addEventListener('keydown', function(ev) {
+    if(ev.key==='Enter') { applied=true; apply(); }
+    if(ev.key==='Escape') { applied=true; el.textContent=sl.fmt(rawVal); }
+  });
+  inp.addEventListener('blur', function() {
+    if(!applied) apply();
+  });
+}
+
+function _rawDisplay(v, sl) {
+  // show raw number for editing (strip €, ×, % signs)
+  if(sl.step < 0.001) return (v*100).toFixed(2); // percentage like CVR
+  if(sl.step < 0.1 && sl.step >= 0.001) return (v*100).toFixed(1); // percentage like shares
+  if(sl.fmt(1).includes('×')) return v.toFixed(1);
+  return Math.round(v).toString();
+}
+
+function _parseInput(str, sl) {
+  let s = str.trim().replace(/[€×%]/g,'');
+  // handle k/m/mil suffixes (e.g. "18k", "1.6m", "1,6mil")
+  let mult = 1;
+  if(/[kK]\s*$/.test(s)) { mult=1000; s=s.replace(/[kK]\s*$/,''); }
+  if(/[mM](il)?\s*$/i.test(s)) { mult=1000000; s=s.replace(/[mM](il)?\s*$/i,''); }
+  // strip spaces (Czech thousand separator), then normalize comma → dot
+  s = s.replace(/\s/g,'').replace(',','.');
+  let v = parseFloat(s);
+  if(isNaN(v)) return NaN;
+  v *= mult;
+  // if user entered percentage, convert back
+  if(sl.step < 0.001) v = v / 100; // CVR-like
+  if(sl.step >= 0.001 && sl.step < 0.1 && sl.fmt(0.5).includes('%')) v = v / 100; // share %
+  return v;
+}
+
+function tGrp(side, grp){
+  openGrp[side]=openGrp[side]===grp?null:grp;
+  const pr=side==='a'?paramsA:paramsB;
+  renderPanel(side,pr,compute(pr),side==='a'?'#16A34A':'#EA580C',side==='a'?'35% GROWTH':'70% GROWTH');
+}
+function rerender(id){
+  const mA=compute(paramsA),mB=compute(paramsB);
+  if(id==='ceo')     renderCEO();
+  if(id==='models') {renderPanel('a',paramsA,mA,'#16A34A','35% GROWTH');renderPanel('b',paramsB,mB,'#EA580C','70% GROWTH');}
+  if(id==='monthly') renderMonthly(mA,mB);
+  if(id==='compare') renderCompare(paramsA,paramsB,mA,mB);
+}
+// ════════════════════════════════════════════════════════════
+// LOCALSTORAGE PERSISTENCE
+// ════════════════════════════════════════════════════════════
+const LS_KEY_A = 'demoPlanA', LS_KEY_B = 'demoPlanB', LS_KEY_REAL = 'demoReality';
+const PARAM_KEYS = ['label','totalRevGoal','decathlonRev','cvr','aov','decathlonAov','googleROAS','metaROAS',
+  'googleBudget','metaBudget',
+  'marginRate','shareOrganic','shareDirect',
+  'shareUnassign','shareReferral','shareEmail','shareOrgsoc',
+  'management','organic','email','pr','decathlonFee','other'];
+
+function lsSave() {
+  const pick = p => { const o={}; for(const k of PARAM_KEYS) o[k]=p[k]; return o; };
+  try {
+    localStorage.setItem(LS_KEY_A, JSON.stringify(pick(paramsA)));
+    localStorage.setItem(LS_KEY_B, JSON.stringify(pick(paramsB)));
+  } catch(e) {}
+}
+function lsLoad() {
+  try {
+    const a = localStorage.getItem(LS_KEY_A), b = localStorage.getItem(LS_KEY_B);
+    if(a) { const d=JSON.parse(a); _migrate(d); Object.assign(paramsA, d); }
+    if(b) { const d=JSON.parse(b); _migrate(d); Object.assign(paramsB, d); }
+  } catch(e) {}
+}
+function _migrate(d) {
+  // v2: shareCrossnet/sharePaidsoc → googleBudget/metaBudget
+  if(d.shareCrossnet !== undefined && d.googleBudget === undefined) {
+    // derive budget from old share-based model: rev*share/ROAS
+    const rev = d.totalRevGoal || 500000;
+    const gROAS = d.googleROAS || 6.1;
+    const mROAS = d.metaROAS || 4.3;
+    d.googleBudget = Math.round(rev * (d.shareCrossnet + (d.sharePaidsrch||0.11)) / gROAS / 500) * 500;
+    d.metaBudget   = Math.round(rev * d.sharePaidsoc / mROAS / 250) * 250;
+    delete d.shareCrossnet; delete d.sharePaidsoc; delete d.sharePaidsrch;
+  }
+}
+function lsSaveReality() {
+  try { localStorage.setItem(LS_KEY_REAL, JSON.stringify(A25.reality2026)); } catch(e) {}
+}
+function lsLoadReality() {
+  try {
+    const r = localStorage.getItem(LS_KEY_REAL);
+    if(r) { const arr = JSON.parse(r); if(Array.isArray(arr) && arr.length===12) A25.reality2026 = arr; }
+  } catch(e) {}
+}
+function resetParams() {
+  if(!confirm('Obnovit výchozí hodnoty? Tato akce smaže uložená nastavení.')) return;
+  Object.assign(paramsA, mkParams(1.35, ''));
+  Object.assign(paramsB, mkParams(1.70, ''));
+  lsSave(); histSave();
+  const av = [...document.querySelectorAll('.view.on')].map(v=>v.id.replace('view-',''))[0] || 'ceo';
+  rerender(av);
+}
+
+function copyParams(fromSide) {
+  const src = fromSide==='a' ? paramsA : paramsB;
+  const dst = fromSide==='a' ? paramsB : paramsA;
+  const target = fromSide==='a' ? 'B' : 'A';
+  if(!confirm(`Zkopírovat všechny hodnoty ze scénáře ${fromSide.toUpperCase()} do scénáře ${target}?`)) return;
+  for(const k of PARAM_KEYS) dst[k] = src[k];
+  lsSave(); histSave();
+  const av = [...document.querySelectorAll('.view.on')].map(v=>v.id.replace('view-',''))[0] || 'models';
+  rerender(av);
+}
+
+lsLoad();
+lsLoadReality();
+// Dynamicky naplnit hlavičku z dat
+document.getElementById('hdr-rev25').textContent = '€' + f(A25.revenue);
+document.getElementById('hdr-sub25').textContent = 'bez DPH €' + f(REV25_EX) + ' · ' + f(A25.sessions) + ' sessions · CVR ' + p2(A25.cvr) + ' · AOV €' + A25.aov;
+rerender('ceo');
+
+// ════════════════════════════════════════════════════════════
+// UNDO / REDO HISTORY
+// ════════════════════════════════════════════════════════════
+const HIST_MAX = 50;
+let histStack = [];   // [{pA:{...}, pB:{...}}]
+let histIdx   = -1;   // aktuální pozice
+let _histPaused = false;
+
+function snapParams(p) {
+  // hluboká kopie jen skalárních klíčů (žádné vnořené objekty)
+  const o = {};
+  for(const k of PARAM_KEYS) o[k] = p[k];
+  return o;
+}
+function histSave() {
+  if(_histPaused) return;
+  const snap = {pA: snapParams(paramsA), pB: snapParams(paramsB)};
+  // zahoď redo větev
+  histStack = histStack.slice(0, histIdx + 1);
+  histStack.push(snap);
+  if(histStack.length > HIST_MAX) histStack.shift();
+  histIdx = histStack.length - 1;
+  histUpdateBtns();
+}
+function histApply(snap) {
+  _histPaused = true;
+  Object.assign(paramsA, snap.pA);
+  Object.assign(paramsB, snap.pB);
+  _histPaused = false;
+  lsSave();
+  const av = [...document.querySelectorAll('.view.on')].map(v=>v.id.replace('view-',''))[0] || 'ceo';
+  rerender(av);
+  histUpdateBtns();
+}
+function histUndo() {
+  if(histIdx <= 0) return;
+  histIdx--;
+  histApply(histStack[histIdx]);
+}
+function histRedo() {
+  if(histIdx >= histStack.length - 1) return;
+  histIdx++;
+  histApply(histStack[histIdx]);
+}
+function histUpdateBtns() {
+  const u = document.getElementById('btn-undo');
+  const r = document.getElementById('btn-redo');
+  if(u) u.disabled = histIdx <= 0;
+  if(r) r.disabled = histIdx >= histStack.length - 1;
+}
+
+// Zachytávej změny — ulož snapshot PŘED změnou (voláme na začátku onSlDone/onCEOSlDone)
+const _origOnSlDone = onSlDone;
+window.onSlDone = function(side, key, val) {
+  _origOnSlDone(side, key, val);
+  histSave();
+  lsSave();
+};
+const _origOnCEOSlDone = onCEOSlDone;
+window.onCEOSlDone = function(key, val) {
+  _origOnCEOSlDone(key, val);
+  histSave();
+  lsSave();
+};
+
+// Klávesové zkratky Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 'z') { e.preventDefault(); histUndo(); }
+  if((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) { e.preventDefault(); histRedo(); }
+});
+
+// Ulož počáteční stav
+histSave();
+
+// ════════════════════════════════════════════════════════════
+// EXPORT MENU
+// ════════════════════════════════════════════════════════════
+function showExportMenu() {
+  const m = document.getElementById('export-menu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+function closeExportMenu() {
+  document.getElementById('export-menu').style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.hactions')) closeExportMenu();
+});
+
+// ════════════════════════════════════════════════════════════
+// CSV EXPORT
+// ════════════════════════════════════════════════════════════
+function csvRow(...cells) {
+  return cells.map(c => {
+    const s = String(c === null || c === undefined ? '' : c);
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
+  }).join(',');
+}
+function exportCSV() {
+  const mA = compute(paramsA);
+  const mB = compute(paramsB);
+  const rows = [];
+  const d = new Date().toLocaleDateString('cs-CZ');
+
+  rows.push(csvRow('DEMO CLIENT · MARKETING PLAN 2026 · Export ' + d));
+  rows.push('');
+
+  // ── SOUHRN ──
+  rows.push(csvRow('SOUHRN SCÉNÁŘŮ'));
+  rows.push(csvRow('Metrika', 'Skutečnost 2025', scenFullLabel(paramsA,'A'), scenFullLabel(paramsB,'B'), 'Jednotka'));
+  rows.push(csvRow('Revenue celkem', A25.revenue, Math.round(mA.totalRev), Math.round(mB.totalRev), 'EUR'));
+  rows.push(csvRow('z toho e-shop', A25.revenue - (A25.decathlonRev||0), paramsA.totalRevGoal, paramsB.totalRevGoal, 'EUR'));
+  rows.push(csvRow('z toho Decathlon (extra)', A25.decathlonRev||'—', paramsA.decathlonRev, paramsB.decathlonRev, 'EUR'));
+  rows.push(csvRow('Visitors / sessions', A25.sessions, Math.round(mA.totalVis), Math.round(mB.totalVis), 'počet'));
+  rows.push(csvRow('Objednávky', A25.orders, Math.round(mA.totalOrders), Math.round(mB.totalOrders), 'počet'));
+  rows.push(csvRow('CVR konverzní poměr', (A25.cvr*100).toFixed(3)+'%', (paramsA.cvr*100).toFixed(3)+'%', (paramsB.cvr*100).toFixed(3)+'%', '%'));
+  rows.push(csvRow('AOV průměrná objednávka', A25.aov, paramsA.aov, paramsB.aov, 'EUR'));
+  rows.push(csvRow('Hrubá marže', '', Math.round(mA.grossMargin), Math.round(mB.grossMargin), 'EUR'));
+  rows.push(csvRow('Marže %', '', (paramsA.marginRate*100).toFixed(1)+'%', (paramsB.marginRate*100).toFixed(1)+'%', '%'));
+  rows.push('');
+
+  // ── NÁKLADY ──
+  rows.push(csvRow('NÁKLADY'));
+  rows.push(csvRow('Položka', 'Skutečnost 2025', scenFullLabel(paramsA,'A'), scenFullLabel(paramsB,'B'), 'Jednotka'));
+  rows.push(csvRow('Google Ads spend', A25.channels.crossnet.spend, Math.round(mA.googleSpend), Math.round(mB.googleSpend), 'EUR'));
+  rows.push(csvRow('Google ROAS', (A25.channels.crossnet.rev/A25.channels.crossnet.spend).toFixed(1)+'×', paramsA.googleROAS.toFixed(1)+'×', paramsB.googleROAS.toFixed(1)+'×', ''));
+  rows.push(csvRow('Meta Ads spend', A25.channels.paidsoc.spend, Math.round(mA.metaSpend), Math.round(mB.metaSpend), 'EUR'));
+  rows.push(csvRow('Meta ROAS', (A25.channels.paidsoc.rev/A25.channels.paidsoc.spend).toFixed(1)+'×', paramsA.metaROAS.toFixed(1)+'×', paramsB.metaROAS.toFixed(1)+'×', ''));
+  rows.push(csvRow('Management / Agentura', A25.management, paramsA.management, paramsB.management, 'EUR'));
+  rows.push(csvRow('Organic / SEO / Blog', A25.organic, paramsA.organic, paramsB.organic, 'EUR'));
+  rows.push(csvRow('Email / Newsletter', A25.email, paramsA.email, paramsB.email, 'EUR'));
+  rows.push(csvRow('PR / Influenceři', A25.pr, paramsA.pr, paramsB.pr, 'EUR'));
+  rows.push(csvRow('Decathlon poplatek', A25.decathlonFee, paramsA.decathlonFee, paramsB.decathlonFee, 'EUR'));
+  rows.push(csvRow('Ostatní', A25.other, paramsA.other, paramsB.other, 'EUR'));
+  rows.push(csvRow('CELKOVÉ NÁKLADY', '', Math.round(mA.totalCost), Math.round(mB.totalCost), 'EUR'));
+  rows.push(csvRow('PNO (náklady / revenue)', '', (mA.pno*100).toFixed(1)+'%', (mB.pno*100).toFixed(1)+'%', '%'));
+  rows.push(csvRow('ČISTÝ ZISK', '', Math.round(mA.netProfit), Math.round(mB.netProfit), 'EUR'));
+  rows.push('');
+
+  // ── MĚSÍČNÍ ROZPIS ──
+  rows.push(csvRow('MĚSÍČNÍ ROZPIS · ' + scenFullLabel(paramsA,'A').toUpperCase()));
+  rows.push(csvRow('Měsíc', 'Revenue', 'Google spend', 'Meta spend', 'Celk. náklady', 'PNO', 'Google ROAS', 'Meta ROAS', 'Sessions (est.)'));
+  for(let i=0;i<12;i++){
+    const m = mA.months[i];
+    rows.push(csvRow(MONTHS_F[i], Math.round(m.tot), Math.round(m.google), Math.round(m.meta),
+      Math.round(m.cost), (m.pno*100).toFixed(1)+'%', m.gROAS.toFixed(1)+'×', m.mROAS.toFixed(1)+'×',
+      Math.round(m.vis)));
+  }
+  rows.push(csvRow('CELKEM',
+    Math.round(mA.months.reduce((s,m)=>s+m.tot,0)),
+    Math.round(mA.months.reduce((s,m)=>s+m.google,0)),
+    Math.round(mA.months.reduce((s,m)=>s+m.meta,0)),
+    Math.round(mA.months.reduce((s,m)=>s+m.cost,0)),
+    (mA.pno*100).toFixed(1)+'%','','',
+    Math.round(mA.months.reduce((s,m)=>s+m.vis,0))));
+  rows.push('');
+
+  rows.push(csvRow('MĚSÍČNÍ ROZPIS · ' + scenFullLabel(paramsB,'B').toUpperCase()));
+  rows.push(csvRow('Měsíc', 'Revenue', 'Google spend', 'Meta spend', 'Celk. náklady', 'PNO', 'Google ROAS', 'Meta ROAS', 'Sessions (est.)'));
+  for(let i=0;i<12;i++){
+    const m = mB.months[i];
+    rows.push(csvRow(MONTHS_F[i], Math.round(m.tot), Math.round(m.google), Math.round(m.meta),
+      Math.round(m.cost), (m.pno*100).toFixed(1)+'%', m.gROAS.toFixed(1)+'×', m.mROAS.toFixed(1)+'×',
+      Math.round(m.vis)));
+  }
+  rows.push(csvRow('CELKEM',
+    Math.round(mB.months.reduce((s,m)=>s+m.tot,0)),
+    Math.round(mB.months.reduce((s,m)=>s+m.google,0)),
+    Math.round(mB.months.reduce((s,m)=>s+m.meta,0)),
+    Math.round(mB.months.reduce((s,m)=>s+m.cost,0)),
+    (mB.pno*100).toFixed(1)+'%','','',
+    Math.round(mB.months.reduce((s,m)=>s+m.vis,0))));
+  rows.push('');
+
+  // ── KANÁLY ──
+  rows.push(csvRow('REVENUE PO KANÁLECH · ' + scenFullLabel(paramsA,'A').toUpperCase()));
+  rows.push(csvRow('Kanál', 'Revenue A', '% celku', 'Spend A', 'PNO'));
+  const chMeta2 = [
+    {k:'organic',  label:'Organic Search',       spend:paramsA.organic},
+    {k:'crossnet', label:'Google Ads',            spend:null},
+    {k:'paidsrch', label:'Google Search Brand',   spend:null},
+    {k:'direct',   label:'Direct / Brand',        spend:0},
+    {k:'paidsoc',  label:'Meta Ads',              spend:null},
+    {k:'referral', label:'Referral / PR',         spend:paramsA.pr},
+    {k:'email',    label:'Email',                 spend:paramsA.email},
+    {k:'orgsoc',   label:'Organic Social',        spend:0},
+    {k:'decathlon',label:'Decathlon Marketplace', spend:paramsA.decathlonFee},
+  ];
+  const totalRevA = Object.values(mA.chRev).reduce((a,b)=>a+b,0);
+  const gSplitA = mA.chRev['crossnet'] / (mA.chRev['crossnet'] + mA.chRev['paidsrch'] || 1);
+  for(const ch of chMeta2){
+    const rev = mA.chRev[ch.k] || 0;
+    const sp  = ch.k==='crossnet'? Math.round(mA.googleSpend*gSplitA)
+              : ch.k==='paidsrch'? Math.round(mA.googleSpend*(1-gSplitA))
+              : ch.k==='paidsoc' ? Math.round(mA.metaSpend)
+              : (ch.spend||0);
+    const pno = sp&&rev ? (sp/rev*100).toFixed(1)+'%' : '—';
+    rows.push(csvRow(ch.label, Math.round(rev), (rev/totalRevA*100).toFixed(1)+'%', sp||'—', pno));
+  }
+  rows.push('');
+  rows.push(csvRow('Poznámka: Meta GA4 vs Meta dashboard — GA4 ukazuje last-click, Meta dashboard post-view+click (7d). Skutečnost leží mezi.'));
+
+  // Stáhni jako BOM UTF-8 (Excel to pozná)
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + rows.join('\n')], {type:'text/csv;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'demo_client_plan_2026.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════════════════════════
+// PDF EXPORT — print dialog (nejspolehlivější cross-browser)
+// ════════════════════════════════════════════════════════════
+function exportPDF() {
+  const mA = compute(paramsA);
+  const mB = compute(paramsB);
+  const d  = new Date().toLocaleDateString('cs-CZ');
+
+  // Helpers (lokální kopie, nezávisí na closure)
+  const ef  = v => Math.round(v).toLocaleString('cs-CZ');
+  const epct= v => (v*100).toFixed(1) + ' %';
+  const epc = v => v>0.28?'#DC2626':v>0.20?'#D97706':'#16A34A';
+
+  // Sémantické řádky pro souhrn
+  const sumRows = [
+    ['Revenue celkem',           ef(A25.revenue),    ef(mA.totalRev),             ef(mB.totalRev),             'EUR'],
+    ['z toho e-shop',            ef(A25.revenue-(A25.decathlonRev||0)), ef(paramsA.totalRevGoal), ef(paramsB.totalRevGoal), 'EUR'],
+    ['z toho Decathlon (extra)', ef(A25.decathlonRev||0), ef(paramsA.decathlonRev), ef(paramsB.decathlonRev), 'EUR'],
+    ['Visitors / sessions',      ef(A25.sessions),   ef(mA.totalVis),             ef(mB.totalVis),             'počet'],
+    ['Objednávky',               ef(A25.orders),     ef(mA.totalOrders),          ef(mB.totalOrders),          'počet'],
+    ['CVR',                      epct(A25.cvr),      epct(paramsA.cvr),           epct(paramsB.cvr),           '%'],
+    ['AOV prům. objednávka',     '€ '+A25.aov,       '€ '+paramsA.aov,            '€ '+paramsB.aov,            'EUR'],
+    ['Hrubá marže',              '—',                ef(mA.grossMargin),          ef(mB.grossMargin),          'EUR'],
+    ['Marže %',                  epct(0.195),        epct(paramsA.marginRate),    epct(paramsB.marginRate),    '%'],
+  ];
+  const costRows = [
+    ['Google Ads spend',         ef(A25.channels.crossnet.spend), ef(mA.googleSpend),  ef(mB.googleSpend),  'EUR'],
+    ['Google ROAS',              (A25.channels.crossnet.rev/A25.channels.crossnet.spend).toFixed(1)+'×', paramsA.googleROAS.toFixed(1)+'×', paramsB.googleROAS.toFixed(1)+'×',''],
+    ['Meta Ads spend',           ef(A25.channels.paidsoc.spend),  ef(mA.metaSpend),    ef(mB.metaSpend),    'EUR'],
+    ['Meta ROAS',                (A25.channels.paidsoc.rev/A25.channels.paidsoc.spend).toFixed(1)+'×', paramsA.metaROAS.toFixed(1)+'×',  paramsB.metaROAS.toFixed(1)+'×', ''],
+    ['Management / Agentura',    ef(A25.management),  ef(paramsA.management),  ef(paramsB.management),  'EUR'],
+    ['Organic / SEO / Blog',     ef(A25.organic),     ef(paramsA.organic),     ef(paramsB.organic),     'EUR'],
+    ['Email / Newsletter',       ef(A25.email),       ef(paramsA.email),       ef(paramsB.email),       'EUR'],
+    ['PR / Influenceři',         ef(A25.pr),          ef(paramsA.pr),          ef(paramsB.pr),          'EUR'],
+    ['Decathlon poplatek',       ef(A25.decathlonFee),ef(paramsA.decathlonFee),ef(paramsB.decathlonFee),'EUR'],
+  ];
+
+  const tblHead = (cols) => `<tr>${cols.map((c,i)=>`<th style="text-align:${i>0?'right':'left'};padding:7px 10px;background:#F3F4F6;border-bottom:2px solid #D1D5DB;font-size:12px">${c}</th>`).join('')}</tr>`;
+  const tblRow  = (cells, bold=false, colorsAt=[]) => `<tr>${cells.map((c,i)=>{
+    const col = colorsAt[i] || (bold?'#111827':'#374151');
+    return `<td style="text-align:${i>0?'right':'left'};padding:6px 10px;border-bottom:1px solid #E5E7EB;font-size:12px;font-weight:${bold?600:400};color:${col}">${c}</td>`;
+  }).join('')}</tr>`;
+
+  const table = (head, rows, boldLast=false) =>
+    `<table style="width:100%;border-collapse:collapse;margin-bottom:20px">${tblHead(head)}${rows.map((r,i)=>tblRow(r,boldLast&&i===rows.length-1)).join('')}</table>`;
+
+  // Měsíční tabulka
+  const monthRowsA = MONTHS_F.map((mn,i)=>{
+    const m=mA.months[i];
+    return [mn, ef(m.tot), ef(m.google), ef(m.meta), ef(m.cost),
+      `<span style="color:${epc(m.pno)}">${epct(m.pno)}</span>`,
+      m.gROAS.toFixed(1)+'×', m.mROAS.toFixed(1)+'×'];
+  });
+  const monthRowsB = MONTHS_F.map((mn,i)=>{
+    const m=mB.months[i];
+    return [mn, ef(m.tot), ef(m.google), ef(m.meta), ef(m.cost),
+      `<span style="color:${epc(m.pno)}">${epct(m.pno)}</span>`,
+      m.gROAS.toFixed(1)+'×', m.mROAS.toFixed(1)+'×'];
+  });
+
+  const section = (title, color='#16A34A') =>
+    `<h2 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:${color};margin:28px 0 10px;padding-bottom:6px;border-bottom:2px solid ${color}22">${title}</h2>`;
+
+  const kpi = (label, valA, valB, unit='') =>
+    `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #E5E7EB;font-size:13px">
+      <span style="color:#374151">${label}</span>
+      <span>
+        <span style="color:#16A34A;font-weight:600;margin-right:20px">A: ${valA}${unit}</span>
+        <span style="color:#EA580C;font-weight:600">B: ${valB}${unit}</span>
+      </span>
+    </div>`;
+
+  const html = `<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>Demo Client · Marketing Report 2026</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,-apple-system,sans-serif;color:#111827;background:#fff;padding:32px 40px;max-width:960px;margin:0 auto}
+  @media print{
+    body{padding:16px 20px}
+    .no-print{display:none}
+    table{page-break-inside:avoid}
+    h2{page-break-before:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print" style="background:#DCFCE7;border:1px solid #16A34A;border-radius:8px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:#15803D">
+  💡 <strong>Pro uložení jako PDF:</strong> stiskni <strong>Ctrl+P</strong> (nebo Cmd+P na Mac) → zvol <strong>„Uložit jako PDF"</strong> → Uložit.
+</div>
+
+<!-- HLAVIČKA -->
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:16px;border-bottom:2px solid #111827">
+  <div>
+    <div style="font-size:22px;font-weight:700;letter-spacing:-.5px">📊 Demo Client · Marketing Plan 2026</div>
+    <div style="font-size:13px;color:#6B7280;margin-top:4px">Demo data · Duální scénář A/B · Export ${d}</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:11px;color:#6B7280;text-transform:uppercase;letter-spacing:.5px">Skutečnost 2025 (GA4)</div>
+    <div style="font-size:20px;font-weight:700">€ ${ef(A25.revenue)}</div>
+    <div style="font-size:11px;color:#6B7280">${ef(A25.sessions)} sessions · CVR ${epct(A25.cvr)} · AOV €${A25.aov}</div>
+  </div>
+</div>
+
+<!-- KLÍČOVÉ KPI -->
+${section('Klíčové výsledky')}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+  ${[
+    ['Revenue celkem', '€ '+ef(mA.totalRev), '€ '+ef(mB.totalRev)],
+    ['Čistý zisk',     '€ '+ef(mA.netProfit),         '€ '+ef(mB.netProfit)],
+    ['PNO',            epct(mA.pno),                  epct(mB.pno)],
+    ['Google spend',   '€ '+ef(mA.googleSpend),       '€ '+ef(mB.googleSpend)],
+    ['Meta spend',     '€ '+ef(mA.metaSpend),         '€ '+ef(mB.metaSpend)],
+    ['Visitors/rok',   ef(mA.totalVis),               ef(mB.totalVis)],
+  ].map(([l,a,b])=>`<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:12px 14px">
+    <div style="font-size:10px;color:#6B7280;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">${l}</div>
+    <div style="font-size:14px;font-weight:700">
+      <span style="color:#16A34A">A: ${a}</span>
+      <span style="color:#D1D5DB;margin:0 6px">|</span>
+      <span style="color:#EA580C">B: ${b}</span>
+    </div>
+  </div>`).join('')}
+</div>
+
+<!-- SOUHRN SCÉNÁŘŮ -->
+${section('Souhrn scénářů vs. 2025')}
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+  ${tblHead(['Metrika','Skutečnost 2025','Scénář A · '+scenLabel(paramsA),'Scénář B · '+scenLabel(paramsB),'Jednotka'])}
+  ${sumRows.map(r=>tblRow(r)).join('')}
+</table>
+
+<!-- NÁKLADY -->
+${section('Náklady')}
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+  ${tblHead(['Položka','Skutečnost 2025','Scénář A · '+scenLabel(paramsA),'Scénář B · '+scenLabel(paramsB),'Jednotka'])}
+  ${costRows.map(r=>tblRow(r)).join('')}
+  ${tblRow(['CELKOVÉ NÁKLADY', '—', ef(mA.totalCost), ef(mB.totalCost), 'EUR'], true)}
+  ${tblRow(['ČISTÝ ZISK', '—', ef(mA.netProfit), ef(mB.netProfit), 'EUR'], true,
+    ['','','#16A34A', mB.netProfit>=0?'#16A34A':'#DC2626',''])}
+  ${tblRow(['PNO', '—', epct(mA.pno), epct(mB.pno), '%'], true,
+    ['','',epc(mA.pno),epc(mB.pno),''])}
+</table>
+
+<!-- MĚSÍCE A -->
+${section('Měsíční rozpis · ' + scenFullLabel(paramsA,'A'))}
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+  ${tblHead(['Měsíc','Revenue','Google spend','Meta spend','Celk. náklady','PNO','G ROAS','M ROAS'])}
+  ${monthRowsA.map(r=>tblRow(r)).join('')}
+  ${tblRow(['CELKEM',
+    ef(mA.months.reduce((s,m)=>s+m.tot,0)),
+    ef(mA.months.reduce((s,m)=>s+m.google,0)),
+    ef(mA.months.reduce((s,m)=>s+m.meta,0)),
+    ef(mA.months.reduce((s,m)=>s+m.cost,0)),
+    epct(mA.pno),'',''], true)}
+</table>
+
+<!-- MĚSÍCE B -->
+${section('Měsíční rozpis · ' + scenFullLabel(paramsB,'B'), '#EA580C')}
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+  ${tblHead(['Měsíc','Revenue','Google spend','Meta spend','Celk. náklady','PNO','G ROAS','M ROAS'])}
+  ${monthRowsB.map(r=>tblRow(r)).join('')}
+  ${tblRow(['CELKEM',
+    ef(mB.months.reduce((s,m)=>s+m.tot,0)),
+    ef(mB.months.reduce((s,m)=>s+m.google,0)),
+    ef(mB.months.reduce((s,m)=>s+m.meta,0)),
+    ef(mB.months.reduce((s,m)=>s+m.cost,0)),
+    epct(mB.pno),'',''], true)}
+</table>
+
+<!-- POZNÁMKY -->
+<div style="margin-top:24px;padding:12px 16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;font-size:11px;color:#6B7280;line-height:1.7">
+  <strong style="color:#374151">Poznámky k datům:</strong><br>
+  • Základem jsou reálná data GA4 2025 (${ef(A25.sessions)} sessions, ${ef(A25.orders)} objednávek, CVR ${epct(A25.cvr)}).<br>
+  • Meta Ads: GA4 ukazuje last-click atribuci (€${ef(A25.channels.paidsoc.rev)}), Meta dashboard post-view+click 7d. Skutečnost leží mezi oběma čísly.<br>
+  • Měsíční distribuce vychází ze sezónního profilu 2025. Dvě sezóny: únor–květen (jaro) a červenec–říjen (léto/podzim).<br>
+  • PNO = celkové marketingové náklady / revenue. Cíl: pod 20 %.
+</div>
+
+</body>
+</html>`;
+
+  // Generuj PDF přes iframe (html2canvas potřebuje viditelný renderovaný DOM)
+  let frame = document.getElementById('pdf-frame');
+  if (frame) frame.remove();
+  frame = document.createElement('iframe');
+  frame.id = 'pdf-frame';
+  frame.style.cssText = 'position:fixed;left:0;top:0;width:960px;height:100vh;opacity:0;pointer-events:none;z-index:-1;';
+  document.body.appendChild(frame);
+  const fd = frame.contentDocument || frame.contentWindow.document;
+  fd.open(); fd.write(html); fd.close();
+
+  // Počkej na renderování, pak generuj PDF
+  setTimeout(() => {
+    html2pdf().set({
+      margin:       [8, 8, 8, 8],
+      filename:     'demo_client_report_2026.pdf',
+      image:        { type: 'jpeg', quality: 0.95 },
+      html2canvas:  { scale: 2, useCORS: true, width: 920, scrollY: 0 },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    }).from(fd.body).save().then(() => {
+      frame.remove();
+    });
+  }, 600);
+}
+</script>
+</body>
+</html>
