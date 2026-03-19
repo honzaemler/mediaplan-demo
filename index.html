@@ -544,7 +544,7 @@ const paramsB = mkParams(1.70, '');
 
 // Dynamický label — vždy aktuální % vs 2025
 function scenLabel(p) {
-  const total = p.totalRevGoal + p.decathlonRev;
+  const total = p.totalRevGoal + (CFG.channels.decathlon ? p.decathlonRev : 0);
   const pct = Math.round((total - REV25_EX) / REV25_EX * 100);
   return (pct >= 0 ? '+' : '') + pct + ' %';
 }
@@ -558,11 +558,14 @@ let ceoSide = 'a';
 // ════════════════════════════════════════════════════════════
 function compute(p) {
   const ownRev = p.totalRevGoal;
-  const totalRev = p.totalRevGoal + p.decathlonRev;
+  const decRev = CFG.channels.decathlon ? p.decathlonRev : 0;
+  const totalRev = p.totalRevGoal + decRev;
 
   // Paid channels: budget → revenue (budget × ROAS)
-  const googleSpend   = p.googleBudget;
-  const metaSpend     = p.metaBudget;
+  const gOn = CFG.channels.crossnet || CFG.channels.paidsrch;
+  const mOn = CFG.channels.paidsoc;
+  const googleSpend   = gOn ? p.googleBudget : 0;
+  const metaSpend     = mOn ? p.metaBudget : 0;
   const paidSpend     = googleSpend + metaSpend;
   const googleRevYear = googleSpend * p.googleROAS;
   const metaRevYear   = metaSpend   * p.metaROAS;
@@ -595,14 +598,19 @@ function compute(p) {
   }
 
   // Decathlon — marketplace, no web sessions
-  chRev['decathlon']    = p.decathlonRev;
+  chRev['decathlon']    = decRev;
   chVis['decathlon']    = 0;
-  chOrders['decathlon'] = p.decathlonRev / p.decathlonAov;
+  chOrders['decathlon'] = decRev ? decRev / p.decathlonAov : 0;
 
   const totalVis    = Object.values(chVis).reduce((a,b)=>a+b,0);
   const totalOrders = Object.values(chOrders).reduce((a,b)=>a+b,0);
 
-  const fixedCosts = p.management+p.organic+p.email+p.pr+p.decathlonFee+p.other;
+  const fixedCosts = (CFG.costs.management ? p.management : 0)
+    + (CFG.costs.organic ? p.organic : 0)
+    + (CFG.costs.email ? p.email : 0)
+    + (CFG.costs.pr ? p.pr : 0)
+    + (CFG.costs.decathlonFee && CFG.channels.decathlon ? p.decathlonFee : 0)
+    + (CFG.costs.other ? p.other : 0);
   const totalCost  = paidSpend + fixedCosts;
   const grossMargin= totalRev * p.marginRate;
   const netProfit  = grossMargin - totalCost;
@@ -970,24 +978,26 @@ function onCEOSlDone(key, val) {
 // ════════════════════════════════════════════════════════════
 // MODELS VIEW
 // ════════════════════════════════════════════════════════════
-function getSliders() { return [
+function getSliders() {
+  const gOn=CFG.channels.crossnet||CFG.channels.paidsrch, mOn=CFG.channels.paidsoc, dOn=CFG.channels.decathlon;
+  return [
   {key:'totalRevGoal', tKey:'revGoal',    min:300000,max:700000,step:5000,  fmt:v=>cx(v),    grp:'rev', nKey:'withoutDec'},
-  {key:'decathlonRev', tKey:'decRev',     min:0,     max:250000,step:5000,  fmt:v=>cx(v),    grp:'rev', nKey:'addToRev'},
+  {key:'decathlonRev', tKey:'decRev',     min:0,     max:250000,step:5000,  fmt:v=>cx(v),    grp:'rev', nKey:'addToRev',    show:dOn},
   {key:'marginRate',   tKey:'marginPct',  min:0.14,  max:0.28,  step:0.005, fmt:v=>p(v),     grp:'rev', note:'2025: '+p(A25.revenue?0.205:0.195)},
   {key:'cvr',          tKey:'cvrLabel',   min:0.0008,max:0.004, step:0.00005,fmt:v=>p2(v),   grp:'rev', note:'GA4 2025: '+p2(A25.cvr)},
   {key:'aov',          tKey:'aovLabel',   min:200,   max:600,   step:5,     fmt:v=>cxR(v),   grp:'rev', note:'GA4 2025: '+cxR(A25.aov)},
-  {key:'decathlonAov', tKey:'decAov',     min:100,   max:500,   step:5,     fmt:v=>cxR(v),   grp:'rev', nKey:'diffAovNote'},
-  {key:'googleBudget', tKey:'googleBudget',min:5000,  max:60000, step:500,  fmt:v=>cx(v),    grp:'ch',  nKey:'spendToRev'},
-  {key:'metaBudget',   tKey:'metaBudget', min:1000,  max:20000, step:250,   fmt:v=>cx(v),    grp:'ch',  nKey:'spendToRev'},
-  {key:'googleROAS',   tKey:'googleROAS', min:2,     max:12,    step:0.1,   fmt:v=>v.toFixed(1)+'×', grp:'ch', note:'2025: '+(gAvg).toFixed(1)+'×'},
-  {key:'metaROAS',     tKey:'metaROAS',   min:1.5,   max:9,     step:0.1,   fmt:v=>v.toFixed(1)+'×', grp:'ch', note:'2025: '+(mAvg).toFixed(1)+'×'},
-  {key:'shareOrganic', tKey:'organicShare',min:0.20,  max:0.55,  step:0.01, fmt:v=>p(v),     grp:'ch',  note:'GA4 2025: '+p(A25.channels.organic.rev/A25.revenue)},
-  {key:'management',   tKey:'management', min:5000,  max:35000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.management)},
-  {key:'organic',      tKey:'organicSeo', min:0,     max:18000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.organic)},
-  {key:'email',        tKey:'emailNewsl', min:0,     max:6000,  step:100,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.email)},
-  {key:'pr',           tKey:'prInflu',    min:0,     max:25000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.pr)},
-  {key:'decathlonFee', tKey:'mktpFee',    min:0,     max:10000, step:250,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.decathlonFee)},
-  {key:'other',        tKey:'otherCosts', min:0,     max:5000,  step:100,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.other)},
+  {key:'decathlonAov', tKey:'decAov',     min:100,   max:500,   step:5,     fmt:v=>cxR(v),   grp:'rev', nKey:'diffAovNote', show:dOn},
+  {key:'googleBudget', tKey:'googleBudget',min:5000,  max:60000, step:500,  fmt:v=>cx(v),    grp:'ch',  nKey:'spendToRev',  show:gOn},
+  {key:'metaBudget',   tKey:'metaBudget', min:1000,  max:20000, step:250,   fmt:v=>cx(v),    grp:'ch',  nKey:'spendToRev',  show:mOn},
+  {key:'googleROAS',   tKey:'googleROAS', min:2,     max:12,    step:0.1,   fmt:v=>v.toFixed(1)+'×', grp:'ch', note:'2025: '+(gAvg).toFixed(1)+'×', show:gOn},
+  {key:'metaROAS',     tKey:'metaROAS',   min:1.5,   max:9,     step:0.1,   fmt:v=>v.toFixed(1)+'×', grp:'ch', note:'2025: '+(mAvg).toFixed(1)+'×', show:mOn},
+  {key:'shareOrganic', tKey:'organicShare',min:0.20,  max:0.55,  step:0.01, fmt:v=>p(v),     grp:'ch',  note:'GA4 2025: '+p(A25.channels.organic.rev/A25.revenue), show:CFG.channels.organic},
+  {key:'management',   tKey:'management', min:5000,  max:35000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.management),    show:CFG.costs.management},
+  {key:'organic',      tKey:'organicSeo', min:0,     max:18000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.organic),       show:CFG.costs.organic},
+  {key:'email',        tKey:'emailNewsl', min:0,     max:6000,  step:100,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.email),         show:CFG.costs.email},
+  {key:'pr',           tKey:'prInflu',    min:0,     max:25000, step:500,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.pr),            show:CFG.costs.pr},
+  {key:'decathlonFee', tKey:'mktpFee',    min:0,     max:10000, step:250,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.decathlonFee),  show:dOn&&CFG.costs.decathlonFee},
+  {key:'other',        tKey:'otherCosts', min:0,     max:5000,  step:100,   fmt:v=>cx(v),    grp:'fix', note:'2025: '+cx(A25.other),         show:CFG.costs.other},
 ]; }
 // Legacy compat — used by onSl live updates
 function getSl(key) { return getSliders().find(s=>s.key===key); }
@@ -1009,6 +1019,7 @@ function renderPanel(side, pr, m, ac, tag) {
     const isOpen=openGrp[side]===grp;
     let rows='';
     for(const sl of gS){
+      if(sl.show===false) continue;
       const val=pr[sl.key];
       const slLabel = sl.tKey ? t(sl.tKey) : sl.key;
       const slNote = sl.nKey ? t(sl.nKey) : (sl.note||'');
