@@ -475,10 +475,30 @@ function L(key) { return LABELS[CFG.lang]?.[key] || LABELS.cs[key] || key; }
 
 function _rerenderAll() {
   renderSettings();
-  // Also update header
+  // Re-render whichever views have been rendered (all of them, to be safe)
+  const mA=compute(paramsA),mB=compute(paramsB);
+  renderCEO();
+  renderPanel('a',paramsA,mA,'#16A34A','35% GROWTH');
+  renderPanel('b',paramsB,mB,'#EA580C','70% GROWTH');
+  renderMonthly(mA,mB);
+  renderCompare(paramsA,paramsB,mA,mB);
+  // Header is updated inside rerender() which is called from sv(), but also update here
   document.getElementById('hdr-rev25').textContent = cx(A25.revenue);
   document.getElementById('hdr-sub25').textContent =
     (CFG.lang==='en'?'excl. VAT ':'bez DPH ') + cx(REV25_EX) + ' · ' + f(A25.sessions) + ' sessions · CVR ' + p2(A25.cvr) + ' · AOV ' + cxR(A25.aov);
+  // Nav + header labels
+  const isEn = CFG.lang==='en';
+  document.getElementById('nav-ceo').textContent     = '👤 CEO Funnel';
+  document.getElementById('nav-models').textContent   = isEn ? '⚡ Models'   : '⚡ Modely';
+  document.getElementById('nav-monthly').textContent  = isEn ? '📅 Monthly'  : '📅 Měsíce';
+  document.getElementById('nav-compare').textContent  = isEn ? '⚖️ Compare'  : '⚖️ Srovnání';
+  document.getElementById('nav-settings').textContent = isEn ? '⚙️ Settings' : '⚙️ Nastavení';
+  document.getElementById('hdr-desc').textContent     = isEn
+    ? 'Demo data · Channel funnel · Seasonal ROAS · Scenarios A/B'
+    : 'Demo data · Funnel po kanálech · Sezónní ROAS · Scénáře A/B';
+  document.getElementById('btn-undo').innerHTML = isEn ? '↩ Undo' : '↩ Zpět';
+  document.getElementById('btn-redo').innerHTML = isEn ? '↪ Redo' : '↪ Vpřed';
+  document.getElementById('hdr-lbl25').textContent = isEn ? '2025 ACTUAL (GA4, incl. VAT)' : '2025 SKUTEČNOST (GA4, s DPH)';
 }
 function toggleChannel(k) { CFG.channels[k] = !CFG.channels[k]; cfgSave(); _rerenderAll(); }
 function toggleCost(k) { CFG.costs[k] = !CFG.costs[k]; cfgSave(); _rerenderAll(); }
@@ -807,6 +827,7 @@ function renderCEO() {
   
   let tRows = '';
   for(const ch of chMeta){
+    if(!CFG.channels[ch.k]) continue;
     const rev   = m.chRev[ch.k] || (ch.k==='decathlon'?pr.decathlonRev:0);
     const isDec  = ch.k==='decathlon';
     const vis   = isDec ? 0 : (m.chVis[ch.k] || rev/(pr.cvr*pr.aov));
@@ -1011,15 +1032,16 @@ function renderPanel(side, pr, m, ac, tag) {
     </div>`;
   }
   
-  const cItems=[
-    {l:'Google Ads',  v:m.googleSpend,      c:'#4285F4'},
-    {l:'Meta Ads',    v:m.metaSpend,        c:'#0668E1'},
-    {l:'Decathlon fee',v:pr.decathlonFee,   c:'#0082C3'},
-    {l:'Organic/SEO', v:pr.organic,         c:'#34A853'},
-    {l:'Email',       v:pr.email,           c:'#FF9800'},
-    {l:'PR/Influ',    v:pr.pr,              c:'#AB47BC'},
-    {l:'Management',  v:pr.management,      c:'#78909C'},
+  const cItemsAll=[
+    {l:'Google Ads',  v:m.googleSpend,      c:'#4285F4', chk:CFG.channels.crossnet||CFG.channels.paidsrch},
+    {l:'Meta Ads',    v:m.metaSpend,        c:'#0668E1', chk:CFG.channels.paidsoc},
+    {l:'Decathlon fee',v:pr.decathlonFee,   c:'#0082C3', chk:CFG.costs.decathlonFee},
+    {l:'Organic/SEO', v:pr.organic,         c:'#34A853', chk:CFG.costs.organic},
+    {l:'Email',       v:pr.email,           c:'#FF9800', chk:CFG.costs.email},
+    {l:'PR/Influ',    v:pr.pr,              c:'#AB47BC', chk:CFG.costs.pr},
+    {l:'Management',  v:pr.management,      c:'#78909C', chk:CFG.costs.management},
   ];
+  const cItems = cItemsAll.filter(ci=>ci.chk);
   let costHtml='';
   for(const ci of cItems){
     const w=Math.min(100,ci.v/m.totalRev*100);
@@ -1138,6 +1160,7 @@ function renderMonthly(mA, mB) {
     </div><div class="cl">${mName(i)}</div></div>`;
   }
   
+  const _gOn=CFG.channels.crossnet||CFG.channels.paidsrch, _mOn=CFG.channels.paidsoc;
   let tRows='';
   for(let i=0;i<12;i++){
     const a=mA.months[i],b=mB.months[i];
@@ -1149,12 +1172,11 @@ function renderMonthly(mA, mB) {
       <td style="color:#6B7280">${cx(A25.monthlyRev[i])}</td>
       ${real?`<td style="color:#7C3AED;font-weight:600">${cx(real)}</td><td style="color:${diff>=0?'#16A34A':'#DC2626'}">${dp(diff)}</td>`:`<td style="color:#D1D5DB">—</td><td></td>`}
       <td style="color:#16A34A;font-weight:600">${cx(a.tot)}</td>
-      <td>${cx(a.google)}</td><td>${cx(a.meta)}</td>
-      <td style="color:${rc(a.gROAS)}">${a.gROAS.toFixed(1)}×</td>
-      <td style="color:${rc(a.mROAS)}">${a.mROAS.toFixed(1)}×</td>
+      ${_gOn?`<td>${cx(a.google)}</td>`:''}${_mOn?`<td>${cx(a.meta)}</td>`:''}
+      ${_gOn?`<td style="color:${rc(a.gROAS)}">${a.gROAS.toFixed(1)}×</td>`:''}${_mOn?`<td style="color:${rc(a.mROAS)}">${a.mROAS.toFixed(1)}×</td>`:''}
       <td style="color:${pc(a.pno)}">${p(a.pno)}</td>
       <td style="color:#EA580C;font-weight:600">${cx(b.tot)}</td>
-      <td>${cx(b.google)}</td><td>${cx(b.meta)}</td>
+      ${_gOn?`<td>${cx(b.google)}</td>`:''}${_mOn?`<td>${cx(b.meta)}</td>`:''}
       <td style="color:${pc(b.pno)}">${p(b.pno)}</td>
     </tr>`;
   }
@@ -1179,21 +1201,21 @@ ${renderRealityPanel(mA)}
   <tr>
     <th>${t('month')}</th><th style="color:#6b7280">2025</th>
     <th colspan="2" style="color:#7C3AED">${t('reality2026')}</th>
-    <th colspan="6" style="color:#16A34A;text-align:center">${t('scenarioA')} · ${scenLabel(paramsA)}</th>
-    <th colspan="4" style="color:#EA580C;text-align:center">${t('scenarioB')} · ${scenLabel(paramsB)}</th>
+    <th colspan="${2+(_gOn?2:0)+(_mOn?2:0)}" style="color:#16A34A;text-align:center">${t('scenarioA')} · ${scenLabel(paramsA)}</th>
+    <th colspan="${2+(_gOn?1:0)+(_mOn?1:0)}" style="color:#EA580C;text-align:center">${t('scenarioB')} · ${scenLabel(paramsB)}</th>
   </tr>
   <tr style="font-size:8px;color:#4b5563">
     <th></th><th>${t('rev')}</th><th>${t('rev')}</th><th>${t('vsPlanA')}</th>
-    <th>${t('revenue')}</th><th>G spend</th><th>M spend</th><th>G ROAS</th><th>M ROAS</th><th>${t('pno')}</th>
-    <th>${t('revenue')}</th><th>G spend</th><th>M spend</th><th>${t('pno')}</th>
+    <th>${t('revenue')}</th>${_gOn?'<th>G spend</th>':''}${_mOn?'<th>M spend</th>':''}${_gOn?'<th>G ROAS</th>':''}${_mOn?'<th>M ROAS</th>':''}<th>${t('pno')}</th>
+    <th>${t('revenue')}</th>${_gOn?'<th>G spend</th>':''}${_mOn?'<th>M spend</th>':''}<th>${t('pno')}</th>
   </tr>
 </thead>
 <tbody>${tRows}
 <tr style="border-top:2px solid var(--border-strong);font-weight:700">
   <td>${t('total')}</td><td style="color:#6B7280">${cx(A25.revenue)}</td><td colspan="2"></td>
-  <td style="color:#16A34A">${cx(sA.t)}</td><td>${cx(sA.g)}</td><td>${cx(sA.m)}</td><td></td><td></td>
+  <td style="color:#16A34A">${cx(sA.t)}</td>${_gOn?`<td>${cx(sA.g)}</td>`:''}${_mOn?`<td>${cx(sA.m)}</td>`:''}${_gOn?'<td></td>':''}${_mOn?'<td></td>':''}
   <td style="color:${pc(mA.pno)}">${p(mA.pno)}</td>
-  <td style="color:#EA580C">${cx(sB.t)}</td><td>${cx(sB.g)}</td><td>${cx(sB.m)}</td>
+  <td style="color:#EA580C">${cx(sB.t)}</td>${_gOn?`<td>${cx(sB.g)}</td>`:''}${_mOn?`<td>${cx(sB.m)}</td>`:''}
   <td style="color:${pc(mB.pno)}">${p(mB.pno)}</td>
 </tr>
 </tbody></table></div>`;
@@ -1205,21 +1227,22 @@ ${renderRealityPanel(mA)}
 function renderCompare(pA, pB, mA, mB) {
   const ef  = v => Math.round(v).toLocaleString('cs-CZ');
   const epct= v => (v*100).toFixed(1) + ' %';
+  const gOn=CFG.channels.crossnet||CFG.channels.paidsrch, mOn=CFG.channels.paidsoc, dOn=CFG.channels.decathlon;
   const rows=[
     {l:t('totalRev'),     a:mA.totalRev,b:mB.totalRev,fmt:v=>cx(v),diff:true,bold:true,aC:'#16A34A',bC:'#EA580C'},
     {l:t('eshopRev'),     a:pA.totalRevGoal,b:pB.totalRevGoal,fmt:v=>cx(v)},
-    {l:t('decathlonRev'), a:pA.decathlonRev,b:pB.decathlonRev,fmt:v=>cx(v)},
+    {l:t('decathlonRev'), a:pA.decathlonRev,b:pB.decathlonRev,fmt:v=>cx(v),show:dOn},
     {l:t('vs2025'),       a:mA.vsActual,    b:mB.vsActual,    fmt:v=>dp(v)},
     {l:t('visitorsYear'), a:mA.totalVis,    b:mB.totalVis,    fmt:v=>fK(v),diff:true},
     {l:t('cvr'),          a:pA.cvr,         b:pB.cvr,         fmt:v=>p2(v)},
     {l:t('orders'),       a:mA.totalOrders, b:mB.totalOrders, fmt:v=>f(Math.round(v)),diff:true},
     {l:t('aov'),          a:pA.aov,         b:pB.aov,         fmt:v=>cxR(v)},
     {sep:true},
-    {l:t('googleSpend'),  a:mA.googleSpend, b:mB.googleSpend, fmt:v=>cx(v),diff:true},
-    {l:t('googleROAS'),   a:pA.googleROAS,  b:pB.googleROAS,  fmt:v=>v.toFixed(1)+'×'},
-    {l:t('metaSpend'),    a:mA.metaSpend,   b:mB.metaSpend,   fmt:v=>cx(v),diff:true},
-    {l:t('metaROAS'),     a:pA.metaROAS,    b:pB.metaROAS,    fmt:v=>v.toFixed(1)+'×'},
-    {l:t('paidSpend'),    a:mA.paidSpend,   b:mB.paidSpend,   fmt:v=>cx(v),diff:true},
+    {l:t('googleSpend'),  a:mA.googleSpend, b:mB.googleSpend, fmt:v=>cx(v),diff:true,show:gOn},
+    {l:t('googleROAS'),   a:pA.googleROAS,  b:pB.googleROAS,  fmt:v=>v.toFixed(1)+'×',show:gOn},
+    {l:t('metaSpend'),    a:mA.metaSpend,   b:mB.metaSpend,   fmt:v=>cx(v),diff:true,show:mOn},
+    {l:t('metaROAS'),     a:pA.metaROAS,    b:pB.metaROAS,    fmt:v=>v.toFixed(1)+'×',show:mOn},
+    {l:t('paidSpend'),    a:mA.paidSpend,   b:mB.paidSpend,   fmt:v=>cx(v),diff:true,show:gOn||mOn},
     {l:t('fixedCosts'),   a:mA.fixedCosts,  b:mB.fixedCosts,  fmt:v=>cx(v)},
     {l:t('costTotal'),    a:mA.totalCost,   b:mB.totalCost,   fmt:v=>cx(v),bold:true},
     {sep:true},
@@ -1230,6 +1253,7 @@ function renderCompare(pA, pB, mA, mB) {
   ];
   let tRows='';
   for(const r of rows){
+    if(r.show===false) continue;
     if(r.sep){tRows+=`<tr><td colspan="4" style="color:var(--border-strong);font-size:7px;padding:1px 8px">──────────────────────────</td></tr>`;continue;}
     const delta=r.diff?`<span style="color:${(r.b-r.a)>=0?'#16A34A':'#DC2626'}">${dp((r.b-r.a)/Math.abs(r.a||1))}</span>`:'—';
     tRows+=`<tr><td style="color:var(--text-muted);font-weight:${r.bold?600:400}">${r.l}</td><td style="color:${r.aC||'var(--text)'};font-weight:${r.bold?600:400}">${r.fmt(r.a)}</td><td style="color:${r.bC||'var(--text)'};font-weight:${r.bold?600:400}">${r.fmt(r.b)}</td><td>${delta}</td></tr>`;
