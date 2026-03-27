@@ -1,0 +1,25 @@
+{
+  "name": "mediaplan-demo",
+  "version": "1.0.0",
+  "description": "Demo Client Marketing Plan 2026",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honzaemler/mediaplan-demo.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "jsdom": "^29.0.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.2"
+  }
+}

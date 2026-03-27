@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
+<title>Demo Client · Marketing Plan 2026</title>
+  <script type="module" crossorigin src="./assets/index-DCm0jwjt.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-B1SSsixQ.css">
+</head>
+<body>
+<div id="top">
+  <div class="t-brand">
+    <span class="t-icon">📊</span>
+    <div>
+      <div class="t-title">Demo Client · Marketing Plan 2026</div>
+      <div class="t-sub" id="hdr-desc">Demo data · Funnel po kanálech · Sezónní ROAS · Scénáře A/B</div>
+    </div>
+  </div>
+  <div class="navs">
+    <button class="nb on" onclick="sv('ceo',this)" id="nav-ceo">👤 CEO Funnel</button>
+    <button class="nb" onclick="sv('models',this)" id="nav-models">⚡ Modely</button>
+    <button class="nb" onclick="sv('monthly',this)" id="nav-monthly">📅 Měsíce</button>
+    <button class="nb" onclick="sv('compare',this)" id="nav-compare">⚖️ Srovnání</button>
+    <button class="nb" onclick="sv('settings',this)" id="nav-settings">⚙️ Nastavení</button>
+  </div>
+  <div class="hactions">
+    <button class="hbtn" id="btn-undo" onclick="histUndo()" title="Zpět (Ctrl+Z)" disabled>↩ Zpět</button>
+    <button class="hbtn" id="btn-redo" onclick="histRedo()" title="Vpřed (Ctrl+Y)" disabled>↪ Vpřed</button>
+    <div class="hsep"></div>
+    <button class="hbtn hbtn-danger" onclick="resetParams()" title="Obnovit výchozí hodnoty">↺ Reset</button>
+    <div class="hsep"></div>
+    <button class="hbtn hbtn-export" onclick="showExportMenu()" id="btn-export">⬇ Export ▾</button>
+    <div id="export-menu" class="emenu" style="display:none">
+      <button onclick="exportCSV();closeExportMenu()">📊 CSV pro Excel</button>
+      <button onclick="exportPDF();closeExportMenu()">📄 Stáhnout PDF report</button>
+    </div>
+  </div>
+  <div class="t-ref">
+    <div class="tr-lbl" id="hdr-lbl25">2025 SKUTEČNOST (GA4, s DPH)</div>
+    <div class="tr-val" id="hdr-rev25"></div>
+    <div class="tr-sub" id="hdr-sub25"></div>
+  </div>
+</div>
+
+<div id="body">
+  <div id="view-ceo"     class="view on"><div id="ceo-c"></div></div>
+  <div id="view-models"  class="view"><div class="grid2"><div id="panel-a"></div><div id="panel-b"></div></div></div>
+  <div id="view-monthly" class="view"><div id="monthly-c"></div></div>
+  <div id="view-compare" class="view"><div id="compare-c"></div></div>
+  <div id="view-settings" class="view"><div id="settings-c"></div></div>
+</div>
+
+</body>
+</html>
